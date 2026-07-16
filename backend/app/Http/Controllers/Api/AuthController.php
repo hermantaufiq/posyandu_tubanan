@@ -64,6 +64,7 @@ class AuthController extends Controller
                     'date_of_birth' => $user->date_of_birth,
                     'address'       => $user->address,
                     'role'          => $role,
+                    'roles'         => $user->getRoleNames()->toArray(),
                 ],
                 'token' => $token,
                 'token_type' => 'Bearer',

@@ -5,12 +5,14 @@ import KmsPage from './pages/KmsPage';
 import JadwalPage from './pages/JadwalPage';
 import RiwayatPage from './pages/RiwayatPage';
 import EdukasiPage from './pages/EdukasiPage';
+import AntriPage from './pages/AntriPage';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="antri" element={<AntriPage />} />
         <Route path="kms" element={<KmsPage />} />
         <Route path="jadwal" element={<JadwalPage />} />
         <Route path="riwayat" element={<RiwayatPage />} />

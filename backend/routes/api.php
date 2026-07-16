@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\AiChatController;
+use App\Http\Controllers\Api\Nakes\RegisterNakesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,12 @@ Route::prefix('auth')->group(function () {
     Route::get('/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 });
 
+// ── Nakes Register (dengan Kode Undangan) ────────────────────────────
+Route::post('/nakes/register', [RegisterNakesController::class, 'register']);
+
+// ── Kader Register (dengan Kode Undangan) ────────────────────────────
+Route::post('/kader/register', [\App\Http\Controllers\Api\Kader\RegisterKaderController::class, 'register']);
+
 // ── AI Chat (Si Posya) — auth optional, public for demo ──────────────
 Route::post('/ai/chat', [AiChatController::class, 'chat']);
 
@@ -33,13 +40,66 @@ Route::post('/ai/chat', [AiChatController::class, 'chat']);
 Route::middleware('auth:sanctum')->group(function () {
 
     // Auth
-    Route::prefix('auth')->group(function () {
-        Route::get('/me', [AuthController::class, 'me']);
-        Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Portal Masyarakat Routes
+    Route::prefix('masyarakat')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Api\Masyarakat\DashboardController::class, 'index']);
+        Route::get('/kms', [\App\Http\Controllers\Api\Masyarakat\KmsController::class, 'index']);
+        Route::get('/jadwal', [\App\Http\Controllers\Api\Masyarakat\JadwalController::class, 'index']);
+        
+        Route::get('/antrian', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'index']);
+        Route::post('/antrian', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'store']);
+        Route::delete('/antrian/{id}', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'destroy']);
+    });
+
+    // Portal Nakes Routes
+    Route::prefix('nakes')->group(function () {
+        Route::get('/antrian', [\App\Http\Controllers\Api\Nakes\AntrianController::class, 'index']);
+        Route::post('/scan-qr', [\App\Http\Controllers\Api\Nakes\AntrianController::class, 'scanQr']);
+        Route::post('/input-ktp', [\App\Http\Controllers\Api\Nakes\AntrianController::class, 'inputKtp']);
+        
+        Route::post('/pemeriksaan', [\App\Http\Controllers\Api\Nakes\PemeriksaanController::class, 'store']);
+    });
+
+    // Portal Kader Routes
+    Route::prefix('kader')->group(function () {
+        Route::get('/antrian', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getAntrian']);
+        Route::post('/warga/hadir', [\App\Http\Controllers\Api\Kader\KaderController::class, 'tandaiHadir']);
+        Route::post('/warga/walkin', [\App\Http\Controllers\Api\Kader\KaderController::class, 'daftarWalkIn']);
+        Route::post('/warga/pengukuran', [\App\Http\Controllers\Api\Kader\KaderController::class, 'simpanPengukuran']);
+    });
+
+    // Portal Admin Routes
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Api\Admin\AdminController::class, 'dashboard']);
+
+        // Jadwal CRUD
+        Route::get('/jadwal', [\App\Http\Controllers\Api\Admin\JadwalAdminController::class, 'index']);
+        Route::post('/jadwal', [\App\Http\Controllers\Api\Admin\JadwalAdminController::class, 'store']);
+        Route::put('/jadwal/{id}', [\App\Http\Controllers\Api\Admin\JadwalAdminController::class, 'update']);
+        Route::delete('/jadwal/{id}', [\App\Http\Controllers\Api\Admin\JadwalAdminController::class, 'destroy']);
+
+        // Users
+        Route::get('/users', [\App\Http\Controllers\Api\Admin\UserAdminController::class, 'index']);
+        Route::get('/users/{id}', [\App\Http\Controllers\Api\Admin\UserAdminController::class, 'show']);
+        Route::put('/users/{id}/toggle', [\App\Http\Controllers\Api\Admin\UserAdminController::class, 'toggle']);
+
+        // Laporan
+        Route::get('/laporan/antrian', [\App\Http\Controllers\Api\Admin\LaporanController::class, 'antrian']);
+        Route::get('/laporan/pemeriksaan', [\App\Http\Controllers\Api\Admin\LaporanController::class, 'pemeriksaan']);
+
+        // Posyandu CRUD
+        Route::get('/posyandu', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'index']);
+        Route::post('/posyandu', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'store']);
+        Route::put('/posyandu/{id}', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'update']);
+        Route::delete('/posyandu/{id}', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'destroy']);
     });
 
     // Profile completion (for Google OAuth users)
     Route::prefix('profile')->group(function () {
-        Route::post('/complete', [ProfileController::class, 'complete']);
+        Route::post('/complete', [\App\Http\Controllers\Api\ProfileController::class, 'complete']);
     });
 });
+

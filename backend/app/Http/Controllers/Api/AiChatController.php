@@ -84,6 +84,7 @@ EOT;
 
         try {
             $response = Http::timeout(30)
+                ->withoutVerifying()   // Fix: SSL cert issue on Windows/Laragon dev
                 ->withHeaders([
                     'x-goog-api-key' => $apiKey,
                     'Content-Type' => 'application/json',

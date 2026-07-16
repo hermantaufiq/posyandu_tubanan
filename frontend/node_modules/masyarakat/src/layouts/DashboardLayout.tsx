@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Calendar, History, LogOut, Bell, Menu, X, User as UserIcon, BookOpen } from 'lucide-react';
+import { LayoutDashboard, FileText, Calendar, History, LogOut, Bell, Menu, X, BookOpen, Ticket, Activity, User } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 
 const navItems = [
   { path: '/', label: 'Beranda', icon: LayoutDashboard },
+  { path: '/antri', label: 'Nomor Antrian', icon: Ticket },
   { path: '/kms', label: 'KMS Digital', icon: FileText },
   { path: '/jadwal', label: 'Jadwal Posyandu', icon: Calendar },
   { path: '/riwayat', label: 'Riwayat Layanan', icon: History },
@@ -82,7 +83,7 @@ export default function DashboardLayout() {
         <div className="h-16 flex items-center px-6 border-b border-slate-100 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <ActivityIcon className="w-5 h-5 text-white" />
+              <Activity className="w-5 h-5 text-white" />
             </div>
             <span className="font-bold text-lg text-slate-800 tracking-tight">Portal Warga</span>
           </div>
@@ -131,6 +132,15 @@ export default function DashboardLayout() {
               <span className="font-bold text-sm">Tanya Bidan</span>
               <span className="text-[10px] opacity-80">Konsultasi Darurat (WA)</span>
             </div>
+          </button>
+
+          {/* Profil Button */}
+          <button
+            onClick={() => {/* TODO: Profile */}}
+            className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <User className="w-5 h-5" />
+            <span className="font-medium text-sm">Profil Saya</span>
           </button>
 
           <button
