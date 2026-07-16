@@ -1,0 +1,8 @@
+{
+  "name": "posyandu-frontend-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
