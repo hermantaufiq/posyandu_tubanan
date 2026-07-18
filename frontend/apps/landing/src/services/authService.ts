@@ -6,8 +6,9 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
+  kategori_warga: 'sasaran' | 'pengunjung';
   name: string;
-  nik: string;
+  nik?: string;
   phone: string;
   email?: string;
   password: string;
@@ -15,6 +16,7 @@ export interface RegisterPayload {
   date_of_birth: string;
   gender: 'male' | 'female';
   address: string;
+  alamat_asal?: string;
 }
 
 export interface AuthUser {

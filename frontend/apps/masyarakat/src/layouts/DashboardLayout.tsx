@@ -23,6 +23,10 @@ export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const [user, setUser] = useState<any>(null);
+  
+  // UI State
+  const [showNotif, setShowNotif] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     // Cross-port SSO handler: Check if token is passed via URL
@@ -30,19 +34,40 @@ export default function DashboardLayout() {
     const tokenParam = params.get('token');
     const userParam = params.get('user');
 
+    let token = localStorage.getItem('auth_token');
+
     if (tokenParam && userParam) {
       localStorage.setItem('auth_token', tokenParam);
       localStorage.setItem('auth_user', userParam);
-      // Clean up URL to hide the token from the address bar
       window.history.replaceState({}, document.title, window.location.pathname);
+      token = tokenParam;
       setUser(JSON.parse(userParam));
     } else {
       const userData = localStorage.getItem('auth_user');
       if (userData) {
-        setUser(JSON.parse(userData));
+        setUser(JSON.parse(userData)); // Set sementara dari cache agar UI tidak blank
       } else {
         window.location.href = 'http://localhost:5173/login';
+        return;
       }
+    }
+
+    // Selalu refresh dari API agar data terbaru (termasuk kategori_warga) tidak ketinggalan
+    if (token) {
+      import('../lib/api').then(({ default: api }) => {
+        api.get('/auth/me')
+          .then(res => {
+            const freshUser = res.data.data;
+            setUser(freshUser);
+            localStorage.setItem('auth_user', JSON.stringify(freshUser));
+          })
+          .catch(() => {
+            // Token mungkin sudah expired — redirect ke login
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            window.location.href = 'http://localhost:5173/login';
+          });
+      });
     }
   }, []);
 
@@ -136,7 +161,7 @@ export default function DashboardLayout() {
 
           {/* Profil Button */}
           <button
-            onClick={() => {/* TODO: Profile */}}
+            onClick={() => { setIsSidebarOpen(false); setShowProfile(true); }}
             className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-colors"
           >
             <User className="w-5 h-5" />
@@ -167,20 +192,56 @@ export default function DashboardLayout() {
           <div className="flex-1" />
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-slate-400 hover:bg-slate-50 rounded-full transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
-            </button>
+            <div className="relative">
+              <button onClick={() => setShowNotif(!showNotif)} className="relative p-2 text-slate-400 hover:bg-slate-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
+              </button>
+              
+              <AnimatePresence>
+                {showNotif && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-50"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold text-slate-800">Notifikasi</h3>
+                      <span className="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">2 Baru</span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-blue-50 p-3 rounded-xl">
+                        <p className="text-sm font-semibold text-blue-800 flex items-center gap-2">
+                          <Calendar className="w-4 h-4" /> Jadwal Posyandu
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1 leading-relaxed">Jangan lupa jadwal posyandu bulan ini. Segera cek menu Jadwal untuk mendaftar antrian!</p>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                          <History className="w-4 h-4" /> Riwayat Tersimpan
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">Hasil pemeriksaan terakhir Anda telah divalidasi oleh Bidan.</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
             <div className="h-8 w-px bg-slate-200" />
-            <div className="flex items-center gap-3">
-              <div className="hidden md:block text-right">
-                <p className="text-sm font-semibold text-slate-700">{user.name}</p>
-                <p className="text-xs text-slate-500">Warga Tubanan</p>
+            
+            <button onClick={() => setShowProfile(true)} className="flex items-center gap-3 text-left focus:outline-none group">
+              <div className="hidden md:block">
+                <p className="text-sm font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">{user.name}</p>
+                <p className="text-xs text-slate-500">
+                  {(user.kategori_warga || 'sasaran') === 'sasaran' ? 'Warga Tubanan' : 'Pengunjung'}
+                </p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shadow-inner">
+              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shadow-inner group-hover:ring-4 group-hover:ring-blue-50 transition-all">
                 {user.name.charAt(0)}
               </div>
-            </div>
+            </button>
           </div>
         </header>
 
@@ -189,6 +250,52 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Profile Modal */}
+      <AnimatePresence>
+        {showProfile && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+              className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative"
+            >
+              <button onClick={() => setShowProfile(false)} className="absolute top-4 right-4 p-2 text-white/70 hover:text-white hover:bg-white/20 rounded-full transition-colors z-10">
+                <X className="w-5 h-5"/>
+              </button>
+              
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-center text-white relative">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
+                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md border border-white/30 text-3xl font-bold shadow-lg">
+                  {user.name.charAt(0)}
+                </div>
+                <h2 className="text-xl font-bold mb-1">{user.name}</h2>
+                <p className="text-blue-100 text-sm font-mono tracking-widest">{user.nik}</p>
+              </div>
+              
+              <div className="p-6 space-y-5">
+                <div>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1.5 flex items-center gap-2">
+                    <User className="w-4 h-4" /> Kategori Warga
+                  </p>
+                  <p className="text-sm font-bold text-slate-800 bg-slate-100 inline-flex items-center px-3 py-1.5 rounded-lg">
+                    {(user.kategori_warga || 'sasaran') === 'sasaran' ? 'Warga Tetap (Sasaran)' : 'Pengunjung Luar Daerah'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1.5 flex items-center gap-2">
+                    <LayoutDashboard className="w-4 h-4" /> Alamat Asal
+                  </p>
+                  <p className="text-sm font-medium text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    {user.alamat_asal || 'Desa Tubanan'}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Si Posya AI Chat Widget — floats on all pages */}
       <AiChatWidget />

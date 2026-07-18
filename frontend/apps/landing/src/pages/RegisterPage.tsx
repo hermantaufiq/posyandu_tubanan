@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, User, CreditCard, Phone, Calendar, MapPin, Lock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2,
+  User, CreditCard, Phone, Calendar, MapPin, Lock, Home, Globe
+} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 
 const registerSchema = z.object({
+  kategori_warga: z.enum(['sasaran', 'pengunjung'], { message: 'Kategori warga wajib dipilih' }),
   name: z.string().min(3, 'Nama lengkap minimal 3 karakter'),
-  nik: z.string()
-    .length(16, 'NIK harus tepat 16 digit')
-    .regex(/^[0-9]+$/, 'NIK hanya boleh berisi angka'),
+  nik: z.string().optional(),
   phone: z.string()
     .min(10, 'Nomor HP minimal 10 digit')
     .max(15, 'Nomor HP maksimal 15 digit')
@@ -20,6 +22,7 @@ const registerSchema = z.object({
   date_of_birth: z.string().min(1, 'Tanggal lahir wajib diisi'),
   gender: z.enum(['male', 'female'], { message: 'Jenis kelamin wajib dipilih' }),
   address: z.string().min(10, 'Alamat minimal 10 karakter'),
+  alamat_asal: z.string().optional(),
   password: z.string()
     .min(8, 'Password minimal 8 karakter')
     .regex(/(?=.*[a-zA-Z])(?=.*[0-9])/, 'Password harus mengandung huruf dan angka'),
@@ -27,6 +30,12 @@ const registerSchema = z.object({
 }).refine((d) => d.password === d.password_confirmation, {
   message: 'Konfirmasi password tidak sesuai',
   path: ['password_confirmation'],
+}).refine((d) => d.kategori_warga !== 'sasaran' || (d.nik && d.nik.length === 16 && /^[0-9]+$/.test(d.nik)), {
+  message: 'NIK harus tepat 16 digit angka untuk warga Tubanan',
+  path: ['nik'],
+}).refine((d) => d.kategori_warga !== 'pengunjung' || (d.alamat_asal && d.alamat_asal.length >= 3), {
+  message: 'Asal kota/desa wajib diisi untuk pengunjung',
+  path: ['alamat_asal'],
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -45,15 +54,18 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
 
-  const { register, handleSubmit, trigger, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
+  const { register, handleSubmit, trigger, watch, setValue, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: 'onTouched',
+    defaultValues: { kategori_warga: 'sasaran' },
   });
+
+  const kategoriWarga = watch('kategori_warga');
 
   const nextStep = async () => {
     const fieldsPerStep: Record<number, (keyof RegisterFormData)[]> = {
-      1: ['name', 'email', 'date_of_birth', 'gender', 'address'],
-      2: ['nik', 'phone'],
+      1: ['kategori_warga', 'name', 'email', 'date_of_birth', 'gender', 'address'],
+      2: ['nik', 'phone', 'alamat_asal'],
     };
     const valid = await trigger(fieldsPerStep[step]);
     if (valid) setStep(step + 1);
@@ -72,13 +84,9 @@ export default function RegisterPage() {
         const errs: Record<string, string> = {};
         Object.entries(e.response.data.errors).forEach(([k, v]) => { errs[k] = v[0]; });
         setServerErrors(errs);
-        
-        // Find which step has the error to navigate correctly
         if (errs.password || errs.password_confirmation) setStep(3);
-        else if (errs.nik || errs.phone) setStep(2);
+        else if (errs.nik || errs.phone || errs.alamat_asal) setStep(2);
         else setStep(1);
-        
-        // Show a global message so the user knows an error occurred
         setServerError(e.response.data.message || 'Mohon periksa kembali isian Anda.');
       } else {
         setServerError(e?.response?.data?.message || 'Terjadi kesalahan. Coba lagi.');
@@ -115,7 +123,7 @@ export default function RegisterPage() {
           </Link>
           <div>
             <h1 className="text-white font-bold text-xl">Daftar Akun Baru</h1>
-            <p className="text-slate-400 text-xs mt-0.5">Khusus untuk Masyarakat Desa Tubanan</p>
+            <p className="text-slate-400 text-xs mt-0.5">Portal Layanan Posyandu Desa Tubanan</p>
           </div>
         </div>
 
@@ -150,6 +158,57 @@ export default function RegisterPage() {
             {/* ── Step 1: Data Diri ── */}
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+
+                {/* === PILIHAN KATEGORI WARGA === */}
+                <div className="space-y-2">
+                  <p className="text-slate-300 text-sm font-medium flex items-center gap-2">
+                    <Home className="w-3.5 h-3.5 text-slate-400" />
+                    Status Kependudukan
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Sasaran */}
+                    <button
+                      type="button"
+                      onClick={() => setValue('kategori_warga', 'sasaran')}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                        kategoriWarga === 'sasaran'
+                          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
+                          : 'border-white/10 bg-white/5 text-slate-400 hover:border-white/20'
+                      }`}
+                    >
+                      <Home className="w-6 h-6" />
+                      <span className="text-sm font-bold">Warga Tubanan</span>
+                      <span className="text-xs opacity-70 text-center">KTP alamat Desa Tubanan</span>
+                      {kategoriWarga === 'sasaran' && (
+                        <span className="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-semibold">
+                          ✓ Sasaran
+                        </span>
+                      )}
+                    </button>
+
+                    {/* Pengunjung */}
+                    <button
+                      type="button"
+                      onClick={() => setValue('kategori_warga', 'pengunjung')}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                        kategoriWarga === 'pengunjung'
+                          ? 'border-amber-500 bg-amber-500/10 text-amber-300'
+                          : 'border-white/10 bg-white/5 text-slate-400 hover:border-white/20'
+                      }`}
+                    >
+                      <Globe className="w-6 h-6" />
+                      <span className="text-sm font-bold">Luar Tubanan</span>
+                      <span className="text-xs opacity-70 text-center">Sedang menginap/berkunjung</span>
+                      {kategoriWarga === 'pengunjung' && (
+                        <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-semibold">
+                          ✓ Pengunjung
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                  {errors.kategori_warga && <p className="text-red-400 text-xs">{errors.kategori_warga.message}</p>}
+                </div>
+
                 <InputField id="name" label="Nama Lengkap" icon={User} error={errors.name?.message} serverErr={serverErrors.name}>
                   <input id="name" type="text" placeholder="Nama sesuai KTP" {...register('name')} className={inputClass} />
                 </InputField>
@@ -171,7 +230,7 @@ export default function RegisterPage() {
                   </InputField>
                 </div>
 
-                <InputField id="address" label="Alamat Lengkap" icon={MapPin} error={errors.address?.message} serverErr={serverErrors.address}>
+                <InputField id="address" label={kategoriWarga === 'sasaran' ? 'Alamat di Desa Tubanan' : 'Alamat Tinggal Saat Ini (di Tubanan)'} icon={MapPin} error={errors.address?.message} serverErr={serverErrors.address}>
                   <textarea id="address" rows={3} placeholder="RT/RW, Dusun, Desa Tubanan" {...register('address')} className={inputClass + " resize-none"} />
                 </InputField>
 
@@ -185,13 +244,33 @@ export default function RegisterPage() {
             {/* ── Step 2: Identitas ── */}
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-amber-300 text-xs">
-                  ℹ️ NIK adalah Nomor Induk Kependudukan 16 digit yang tercantum di KTP Anda.
-                </div>
 
-                <InputField id="nik" label="NIK (16 digit)" icon={CreditCard} error={errors.nik?.message} serverErr={serverErrors.nik}>
-                  <input id="nik" type="text" maxLength={16} placeholder="3312XXXXXXXXXXXX" {...register('nik')} className={inputClass} />
-                </InputField>
+                <AnimatePresence mode="wait">
+                  {kategoriWarga === 'sasaran' ? (
+                    <motion.div key="sasaran-fields" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+                      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 text-emerald-300 text-xs flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                        <span>Sebagai <strong>Warga Sasaran</strong>, NIK Anda akan dicocokkan dengan data kependudukan Desa Tubanan. Pastikan NIK sesuai KTP.</span>
+                      </div>
+                      <InputField id="nik" label="NIK (16 digit)" icon={CreditCard} error={errors.nik?.message} serverErr={serverErrors.nik}>
+                        <input id="nik" type="text" maxLength={16} placeholder="3312XXXXXXXXXXXX" {...register('nik')} className={inputClass} />
+                      </InputField>
+                    </motion.div>
+                  ) : (
+                    <motion.div key="pengunjung-fields" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+                      <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-amber-300 text-xs flex items-start gap-2">
+                        <Globe className="w-4 h-4 mt-0.5 shrink-0" />
+                        <span>Sebagai <strong>Pengunjung</strong>, Anda tetap bisa mendapat layanan Posyandu. Data Anda akan dicatat sebagai kunjungan, bukan sasaran desa.</span>
+                      </div>
+                      <InputField id="alamat_asal" label="Asal Kota / Desa" icon={Globe} error={errors.alamat_asal?.message} serverErr={serverErrors.alamat_asal}>
+                        <input id="alamat_asal" type="text" placeholder="Contoh: Desa Bandung, Kab. Jepara" {...register('alamat_asal')} className={inputClass} />
+                      </InputField>
+                      <InputField id="nik" label="NIK (Opsional)" icon={CreditCard} error={errors.nik?.message} serverErr={serverErrors.nik}>
+                        <input id="nik" type="text" maxLength={16} placeholder="Jika punya, isi NIK Anda" {...register('nik')} className={inputClass} />
+                      </InputField>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <InputField id="phone" label="Nomor HP Aktif" icon={Phone} error={errors.phone?.message} serverErr={serverErrors.phone}>
                   <input id="phone" type="tel" placeholder="08XXXXXXXXXX" {...register('phone')} className={inputClass} />

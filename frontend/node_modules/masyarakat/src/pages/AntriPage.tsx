@@ -17,10 +17,12 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string; ico
 };
 
 const JENIS_OPTIONS = [
-  { value: 'Balita', label: 'Balita (0–5 Tahun)', desc: 'Timbang, imunisasi, vitamin', icon: '👶' },
-  { value: 'Ibu Hamil', label: 'Ibu Hamil (ANC)', desc: 'Antenatal Care & cek kehamilan', icon: '🤰' },
-  { value: 'Ibu Nifas', label: 'Ibu Nifas', desc: 'Pasca persalinan (0–42 hari)', icon: '🍼' },
-  { value: 'Lansia', label: 'Lansia (60+)', desc: 'Cek tekanan darah & kesehatan', icon: '👴' },
+  { value: 'Anak Prasekolah (0-70 bulan)', label: 'Anak Prasekolah', desc: 'Umur 0-70 bulan', icon: '👶' },
+  { value: 'Ibu Hamil', label: 'Ibu Hamil', desc: 'Pemeriksaan Kehamilan', icon: '🤰' },
+  { value: 'Ibu Nifas dan Menyusui', label: 'Ibu Nifas & Menyusui', desc: 'Pasca persalinan', icon: '🍼' },
+  { value: 'Anak Sekolah dan Remaja', label: 'Anak Sekolah & Remaja', desc: 'Umur 6-18 tahun', icon: '🎒' },
+  { value: 'Usia Produktif', label: 'Usia Produktif', desc: 'Dewasa 19-50 tahun', icon: '🧑' },
+  { value: 'Lansia', label: 'Lansia', desc: 'Umur > 50 tahun', icon: '👴' },
 ];
 
 export default function AntriPage() {
@@ -28,7 +30,7 @@ export default function AntriPage() {
   const [step, setStep] = useState<'pilih' | 'konfirmasi' | 'tiket'>('pilih');
   const [jadwals, setJadwals] = useState<any[]>([]);
   const [selectedJadwal, setSelectedJadwal] = useState<any>(null);
-  const [jenisLayanan, setJenisLayanan] = useState<string>('Balita');
+  const [jenisLayanan, setJenisLayanan] = useState<string>('Anak Prasekolah (0-70 bulan)');
   const [antriData, setAntriData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);

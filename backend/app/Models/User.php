@@ -27,6 +27,8 @@ class User extends Authenticatable
         'is_active',
         'google_id',
         'needs_nik_completion',
+        'kategori_warga',
+        'alamat_asal',
     ];
 
     protected $hidden = [

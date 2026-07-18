@@ -47,6 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('masyarakat')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Api\Masyarakat\DashboardController::class, 'index']);
         Route::get('/kms', [\App\Http\Controllers\Api\Masyarakat\KmsController::class, 'index']);
+        Route::get('/riwayat', [\App\Http\Controllers\Api\Masyarakat\RiwayatController::class, 'index']);
+        Route::post('/skrining-mandiri', [\App\Http\Controllers\Api\Masyarakat\RiwayatController::class, 'skriningMandiri']);
+        Route::post('/lapor-mandiri', [\App\Http\Controllers\Api\Masyarakat\RiwayatController::class, 'laporMandiri']);
         Route::get('/jadwal', [\App\Http\Controllers\Api\Masyarakat\JadwalController::class, 'index']);
         
         Route::get('/antrian', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'index']);

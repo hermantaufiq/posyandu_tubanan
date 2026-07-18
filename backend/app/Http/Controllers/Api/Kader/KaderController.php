@@ -24,7 +24,22 @@ class KaderController extends Controller
         $antrians = Antrian::with(['user', 'pemeriksaan'])
             ->where('jadwal_id', $jadwalId)
             ->orderBy('nomor_antrian', 'asc')
-            ->get();
+            ->get()
+            ->map(fn($a) => [
+                'id'            => $a->id,
+                'nomor_antri'   => $a->nomor_antrian ?? $a->nomor_antri,
+                'jenis_layanan' => $a->jenis_layanan,
+                'status'        => $a->status,
+                'pemeriksaan'   => $a->pemeriksaan,
+                'user' => $a->user ? [
+                    'id'              => $a->user->id,
+                    'name'            => $a->user->name,
+                    'nik'             => $a->user->nik,
+                    'phone'           => $a->user->phone,
+                    'kategori_warga'  => $a->user->kategori_warga ?? 'sasaran',
+                    'alamat_asal'     => $a->user->alamat_asal,
+                ] : null,
+            ]);
 
         return response()->json([
             'success' => true,
@@ -63,7 +78,7 @@ class KaderController extends Controller
         $request->validate([
             'nik' => 'required|string|size:16',
             'name' => 'required|string|max:255',
-            'jenis_layanan' => 'required|string|in:Balita,Ibu Hamil,Ibu Nifas,Lansia',
+            'jenis_layanan' => 'required|string|in:Balita dan Anak Prasekolah,Ibu Hamil,Ibu Nifas dan Menyusui,Anak Usia Sekolah dan Remaja,Usia Produktif,Lansia',
             'jadwal_id' => 'required|exists:jadwal_posyandus,id',
         ]);
 
@@ -123,41 +138,58 @@ class KaderController extends Controller
     {
         $request->validate([
             'antrian_id' => 'required|exists:antrians,id',
-            'berat_badan' => 'required|numeric',
-            'tinggi_badan' => 'required|numeric',
+            'berat_badan' => 'nullable|numeric',
+            'tinggi_badan' => 'nullable|numeric',
             'lingkar_kepala' => 'nullable|numeric',
+            'lingkar_perut' => 'nullable|numeric',
+            'lila' => 'nullable|numeric',
+            'tensi' => 'nullable|string',
+            'gula_darah' => 'nullable|numeric',
+            'skrining_tbc' => 'nullable|array',
+            'skrining_lansia' => 'nullable|array',
+            'skrining_ptm' => 'nullable|array',
         ]);
 
         $antrian = Antrian::with('user')->findOrFail($request->antrian_id);
 
-        // Cari atau buat profil Balita (dummy atau asli) untuk user ini
-        $balita = \App\Models\Balita::firstOrCreate(
-            ['user_id' => $antrian->user_id],
-            [
-                'nama_balita' => $antrian->user->name,
-                'nik_balita' => $antrian->user->nik ?? '0000',
-                'tanggal_lahir' => $antrian->user->date_of_birth ?? now()->subYears(1),
-                'jenis_kelamin' => $antrian->user->gender ?? 'L',
-            ]
-        );
+        // Cek apakah layanannya untuk Balita
+        $balita_id = null;
+        if (str_contains(strtolower($antrian->jenis_layanan), 'balita') || str_contains(strtolower($antrian->jenis_layanan), 'prasekolah')) {
+            $balita = \App\Models\Balita::firstOrCreate(
+                ['user_id' => $antrian->user_id],
+                [
+                    'nama_balita' => $antrian->user->name,
+                    'nik_balita' => $antrian->user->nik ?? '0000',
+                    'tanggal_lahir' => $antrian->user->date_of_birth ?? now()->subYears(1),
+                    'jenis_kelamin' => $antrian->user->gender ?? 'L',
+                ]
+            );
+            $balita_id = $balita->id;
+        }
 
         // Buat record pemeriksaan awal
         $pemeriksaan = Pemeriksaan::create([
-            'balita_id' => $balita->id,
+            'user_id' => $antrian->user_id,
+            'balita_id' => $balita_id,
             'jadwal_id' => $antrian->jadwal_id,
             'berat_badan' => $request->berat_badan,
             'tinggi_badan' => $request->tinggi_badan,
             'lingkar_kepala' => $request->lingkar_kepala,
+            'lingkar_perut' => $request->lingkar_perut,
+            'lila' => $request->lila,
+            'tensi' => $request->tensi,
+            'gula_darah' => $request->gula_darah,
+            'skrining_tbc' => $request->skrining_tbc,
+            'skrining_lansia' => $request->skrining_lansia,
+            'skrining_ptm' => $request->skrining_ptm,
         ]);
 
-        // Hubungkan dengan antrian dan ubah status
-        $antrian->update([
-            'status' => 'tunggu_bidan'
-        ]);
+        // Update antrian menjadi tunggu_bidan (pindah ke Meja 4)
+        $antrian->update(['status' => 'tunggu_bidan']);
 
         return response()->json([
             'success' => true,
-            'message' => 'Data pengukuran berhasil disimpan. Warga diarahkan ke Meja Bidan.',
+            'message' => 'Pengukuran ILP berhasil disimpan. Lanjut ke Meja 4 (Bidan).',
             'data' => $pemeriksaan
         ]);
     }

@@ -107,8 +107,9 @@ function PemeriksaanModal({
 }) {
   const isLansia   = antrian.jenis_layanan === 'Lansia';
   const isIbuHamil = antrian.jenis_layanan === 'Ibu Hamil';
-  const isIbuNifas = antrian.jenis_layanan === 'Ibu Nifas';
-  const isBalita   = !isLansia && !isIbuHamil && !isIbuNifas;
+  const isIbuNifas = antrian.jenis_layanan?.includes('Nifas');
+  const isBalita   = antrian.jenis_layanan?.includes('Prasekolah');
+  const isRemaja   = antrian.jenis_layanan?.includes('Remaja') || antrian.jenis_layanan?.includes('Sekolah');
   const riwayat  = antrian.riwayat ?? [];
 
   const [activeTab, setActiveTab] = useState<'periksa' | 'riwayat'>(
@@ -168,7 +169,7 @@ function PemeriksaanModal({
               </div>
               <h3 className="text-xl font-black">{antrian.user?.name}</h3>
               <p className="text-sm opacity-80 mt-0.5">
-                No. Antri {antrian.nomor_antri} • {antrian.jenis_layanan ?? 'Balita/Umum'}
+                No. Antri {antrian.nomor_antri} • {antrian.jenis_layanan ?? 'Anak Prasekolah'}
 
               </p>
             </div>
@@ -178,7 +179,7 @@ function PemeriksaanModal({
               isIbuNifas ? 'bg-rose-500/30 text-rose-100' :
               'bg-emerald-500/30 text-emerald-100'
             }`}>
-              {isLansia ? '👴 Lansia' : isIbuHamil ? '🤰 Ibu Hamil' : isIbuNifas ? '🤱 Ibu Nifas' : '👶 Balita'}
+              {isLansia ? '👴 Lansia' : isIbuHamil ? '🤰 Ibu Hamil' : isIbuNifas ? '🤱 Ibu Nifas & Menyusui' : isBalita ? '👶 Balita & Prasekolah' : isRemaja ? '🎒 Usia Sekolah & Remaja' : '🧑 Usia Produktif'}
             </div>
           </div>
           {/* Tab Switcher */}
@@ -546,10 +547,14 @@ export default function DashboardNakes() {
                       <span className="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">👴 Lansia</span>
                     ) : a.jenis_layanan === 'Ibu Hamil' ? (
                       <span className="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">🤰 Ibu Hamil</span>
-                    ) : a.jenis_layanan === 'Ibu Nifas' ? (
-                      <span className="text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">🤱 Ibu Nifas</span>
+                    ) : a.jenis_layanan?.includes('Prasekolah') ? (
+                      <span className="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">👶 Balita & Prasekolah</span>
+                    ) : (a.jenis_layanan?.includes('Remaja') || a.jenis_layanan?.includes('Sekolah')) ? (
+                      <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">🎒 Usia Sekolah & Remaja</span>
+                    ) : a.jenis_layanan?.includes('Nifas') ? (
+                      <span className="text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">🤱 Ibu Nifas & Menyusui</span>
                     ) : (
-                      <span className="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">👶 Balita</span>
+                      <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold flex-shrink-0">🧑 Usia Produktif</span>
                     )}
                   </div>
                   {/* Show measurement from Kader if exists */}
