@@ -8,14 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // PostgreSQL: drop old enum check and recreate with 'tunggu_bidan' added
-        DB::statement("ALTER TABLE antrians DROP CONSTRAINT IF EXISTS antrians_status_check");
-        DB::statement("ALTER TABLE antrians ADD CONSTRAINT antrians_status_check CHECK (status IN ('menunggu','diperiksa','tunggu_bidan','selesai','batal'))");
+        // MySQL/TiDB: status column is VARCHAR, no named CHECK constraint needed
+        // Just ensure status column supports the new 'tunggu_bidan' value (already allowed as VARCHAR)
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE antrians DROP CONSTRAINT IF EXISTS antrians_status_check");
-        DB::statement("ALTER TABLE antrians ADD CONSTRAINT antrians_status_check CHECK (status IN ('menunggu','diperiksa','selesai','batal'))");
+        // No-op for MySQL/TiDB
     }
 };

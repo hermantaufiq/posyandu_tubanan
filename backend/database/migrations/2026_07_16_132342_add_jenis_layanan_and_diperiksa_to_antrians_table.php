@@ -16,11 +16,8 @@ return new class extends Migration
             $table->string('jenis_layanan')->default('Balita/Umum');
         });
 
-        // PostgreSQL: drop old enum check and recreate with 'diperiksa' added
-        DB::statement("ALTER TABLE antrians DROP CONSTRAINT IF EXISTS antrians_status_check");
-        DB::statement("ALTER TABLE antrians ALTER COLUMN status TYPE VARCHAR(20)");
-        DB::statement("ALTER TABLE antrians ADD CONSTRAINT antrians_status_check CHECK (status IN ('menunggu','diperiksa','selesai','batal'))");
-        DB::statement("ALTER TABLE antrians ALTER COLUMN status SET DEFAULT 'menunggu'");
+        // MySQL/TiDB compatible: modify status column to VARCHAR to support new values
+        DB::statement("ALTER TABLE antrians MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'menunggu'");
     }
 
     public function down(): void

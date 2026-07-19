@@ -25,8 +25,8 @@ export default function DashboardLayout() {
   const [user, setUser] = useState<any>(null);
   
   // UI State
-  const [showNotif, setShowNotif] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     // Cross-port SSO handler: Check if token is passed via URL
@@ -67,6 +67,10 @@ export default function DashboardLayout() {
             localStorage.removeItem('auth_user');
             window.location.href = 'http://localhost:5173/login';
           });
+          
+        api.get('/masyarakat/pengumuman')
+          .then(res => setUnreadCount(res.data.total))
+          .catch(console.error);
       });
     }
   }, []);
@@ -193,40 +197,14 @@ export default function DashboardLayout() {
 
           <div className="flex items-center gap-4">
             <div className="relative">
-              <button onClick={() => setShowNotif(!showNotif)} className="relative p-2 text-slate-400 hover:bg-slate-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100">
+              <Link to="/pengumuman" className="relative p-2 text-slate-400 hover:bg-slate-50 hover:text-blue-600 rounded-full transition-colors flex items-center justify-center focus:outline-none">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
-              </button>
-              
-              <AnimatePresence>
-                {showNotif && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-50"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-bold text-slate-800">Notifikasi</h3>
-                      <span className="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">2 Baru</span>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="bg-blue-50 p-3 rounded-xl">
-                        <p className="text-sm font-semibold text-blue-800 flex items-center gap-2">
-                          <Calendar className="w-4 h-4" /> Jadwal Posyandu
-                        </p>
-                        <p className="text-xs text-blue-600 mt-1 leading-relaxed">Jangan lupa jadwal posyandu bulan ini. Segera cek menu Jadwal untuk mendaftar antrian!</p>
-                      </div>
-                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                          <History className="w-4 h-4" /> Riwayat Tersimpan
-                        </p>
-                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">Hasil pemeriksaan terakhir Anda telah divalidasi oleh Bidan.</p>
-                      </div>
-                    </div>
-                  </motion.div>
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[9px] font-bold text-white bg-rose-500 border-2 border-white rounded-full">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
                 )}
-              </AnimatePresence>
+              </Link>
             </div>
             
             <div className="h-8 w-px bg-slate-200" />
@@ -300,24 +278,5 @@ export default function DashboardLayout() {
       {/* Si Posya AI Chat Widget — floats on all pages */}
       <AiChatWidget />
     </div>
-  );
-}
-
-function ActivityIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-    </svg>
   );
 }

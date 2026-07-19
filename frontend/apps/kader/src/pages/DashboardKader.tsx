@@ -16,13 +16,22 @@ export default function DashboardKader() {
   // Meja 1 Walk-in form state
   const [walkinForm, setWalkinForm] = useState({ nik: '', name: '', jenis_layanan: 'Anak Prasekolah (0-70 bulan)' });
 
-  const jadwalId = 1;
+  const [jadwalId, setJadwalId] = useState<number>(0);
+  const [jadwals, setJadwals] = useState<any[]>([]);
 
   useEffect(() => {
+    api.get('/kader/jadwal-aktif').then(res => {
+      setJadwals(res.data.data);
+      if (res.data.data.length > 0) setJadwalId(res.data.data[0].id);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!jadwalId) return;
     fetchAntrian();
     const interval = setInterval(fetchAntrian, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [jadwalId]);
 
   const fetchAntrian = async () => {
     try {
@@ -111,6 +120,18 @@ export default function DashboardKader() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <select
+              value={jadwalId}
+              onChange={(e) => setJadwalId(Number(e.target.value))}
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium max-w-[200px]"
+            >
+              <option value={0}>Pilih Sesi Jadwal</option>
+              {jadwals.map((j: any) => (
+                <option key={j.id} value={j.id}>
+                  {j.kegiatan} - {j.tanggal}
+                </option>
+              ))}
+            </select>
             <div className="hidden md:flex flex-col text-right">
               <span className="font-bold text-sm text-slate-800">{user.name || 'Kader'}</span>
               <span className="text-xs text-emerald-600 font-medium">Petugas Aktif</span>

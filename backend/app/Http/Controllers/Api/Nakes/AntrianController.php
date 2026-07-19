@@ -7,46 +7,36 @@ use Illuminate\Http\Request;
 
 class AntrianController extends Controller
 {
-    // Meja 3: Pantau Antrian (dengan riwayat kunjungan pasien)
+    // Meja 4 & 5: Pantau Antrian yang sudah diproses Kader
     public function index(Request $request)
     {
         $jadwalId = $request->query('jadwal_id');
+        $status   = $request->query('status'); // tunggu_bidan, selesai, atau null (semua)
         
         $query = \App\Models\Antrian::with([
-                'user',
-                'jadwal.posyandu',
-                // Pengukuran hari ini (dari Kader)
-                'pemeriksaan' => function ($q) use ($jadwalId) {
-                    if ($jadwalId) $q->where('jadwal_id', $jadwalId);
-                }
-            ])
-            ->whereDate('created_at', now()->toDateString());
+            'user',
+            'jadwal.posyandu',
+            'pemeriksaan',
+        ]);
             
         if ($jadwalId) {
             $query->where('jadwal_id', $jadwalId);
         }
+
+        // Default tampilkan semua yang sudah/sedang diproses (kecuali masih 'menunggu' saja)
+        if ($status) {
+            $query->where('status', $status);
+        }
         
         $antrians = $query->orderBy('nomor_antri', 'asc')->get();
 
-        // Untuk setiap antrian, ambil juga riwayat kunjungan sebelumnya milik pasien ini
+        // Tambahkan riwayat pemeriksaan sebelumnya untuk setiap pasien
         $antrians->transform(function ($antrian) {
-            $balita = \App\Models\Balita::where('user_id', $antrian->user_id)->first();
-
-            if ($balita) {
-                // Ambil 6 kunjungan terakhir (kecuali hari ini)
-                $riwayat = \App\Models\Pemeriksaan::where('balita_id', $balita->id)
-                    ->where('jadwal_id', '!=', $antrian->jadwal_id)
-                    ->orderBy('created_at', 'desc')
-                    ->take(6)
-                    ->get(['id','berat_badan','tinggi_badan','status_gizi','imunisasi','vitamin','catatan','created_at']);
-
-                $antrian->balita    = $balita;
-                $antrian->riwayat   = $riwayat;
-            } else {
-                $antrian->balita    = null;
-                $antrian->riwayat   = [];
-            }
-
+            $antrian->riwayat = \App\Models\Pemeriksaan::where('user_id', $antrian->user_id)
+                ->where('antrian_id', '!=', $antrian->pemeriksaan?->antrian_id)
+                ->orderBy('created_at', 'desc')
+                ->take(6)
+                ->get(['id', 'berat_badan', 'tinggi_badan', 'status_gizi', 'imunisasi', 'vitamin', 'catatan', 'created_at']);
             return $antrian;
         });
         

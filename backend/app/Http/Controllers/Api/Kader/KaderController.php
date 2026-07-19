@@ -14,16 +14,25 @@ use Carbon\Carbon;
 class KaderController extends Controller
 {
     /**
+     * Get daftar jadwal aktif
+     */
+    public function getJadwalAktif()
+    {
+        $jadwals = \App\Models\Jadwal::with('posyandu')->orderBy('tanggal', 'desc')->get();
+        return response()->json(['success' => true, 'data' => $jadwals]);
+    }
+
+    /**
      * Get daftar antrian untuk jadwal hari ini.
      * Mengelompokkan berdasarkan status (menunggu, hadir, tunggu_bidan, selesai).
      */
     public function getAntrian(Request $request)
     {
-        $jadwalId = $request->query('jadwal_id', 1);
+        $jadwalId = $request->query('jadwal_id');
 
         $antrians = Antrian::with(['user', 'pemeriksaan'])
             ->where('jadwal_id', $jadwalId)
-            ->orderBy('nomor_antrian', 'asc')
+            ->orderBy('nomor_antri', 'asc')
             ->get()
             ->map(fn($a) => [
                 'id'            => $a->id,
@@ -167,21 +176,22 @@ class KaderController extends Controller
             $balita_id = $balita->id;
         }
 
-        // Buat record pemeriksaan awal
+        // Buat record pemeriksaan awal (terhubung langsung ke antrian)
         $pemeriksaan = Pemeriksaan::create([
-            'user_id' => $antrian->user_id,
-            'balita_id' => $balita_id,
-            'jadwal_id' => $antrian->jadwal_id,
-            'berat_badan' => $request->berat_badan,
-            'tinggi_badan' => $request->tinggi_badan,
+            'antrian_id'     => $antrian->id,
+            'user_id'        => $antrian->user_id,
+            'balita_id'      => $balita_id,
+            'jadwal_id'      => $antrian->jadwal_id,
+            'berat_badan'    => $request->berat_badan,
+            'tinggi_badan'   => $request->tinggi_badan,
             'lingkar_kepala' => $request->lingkar_kepala,
-            'lingkar_perut' => $request->lingkar_perut,
-            'lila' => $request->lila,
-            'tensi' => $request->tensi,
-            'gula_darah' => $request->gula_darah,
-            'skrining_tbc' => $request->skrining_tbc,
-            'skrining_lansia' => $request->skrining_lansia,
-            'skrining_ptm' => $request->skrining_ptm,
+            'lingkar_perut'  => $request->lingkar_perut,
+            'lila'           => $request->lila,
+            'tensi'          => $request->tensi,
+            'gula_darah'     => $request->gula_darah,
+            'skrining_tbc'   => $request->skrining_tbc,
+            'skrining_lansia'=> $request->skrining_lansia,
+            'skrining_ptm'   => $request->skrining_ptm,
         ]);
 
         // Update antrian menjadi tunggu_bidan (pindah ke Meja 4)

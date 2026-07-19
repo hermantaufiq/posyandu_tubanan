@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { HeartHandshake, ShieldCheck, ArrowRight, Eye, EyeOff, KeyRound, User, Mail, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { HeartHandshake, ArrowRight, Eye, EyeOff, KeyRound, User, Mail, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import api from '../lib/api';
 
 export default function RegisterPage() {

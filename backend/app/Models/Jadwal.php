@@ -10,17 +10,13 @@ class Jadwal extends Model
         'posyandu_id', 'tanggal', 'waktu_mulai', 'waktu_selesai', 'kegiatan', 'keterangan', 'kapasitas'
     ];
 
-    protected $casts = [
-        'tanggal' => 'date',
-    ];
-
     public function posyandu()
     {
         return $this->belongsTo(Posyandu::class);
     }
 
-    public function antrians()
+    public function pemeriksaans()
     {
-        return $this->hasMany(Antrian::class);
+        return $this->hasMany(Pemeriksaan::class, 'jadwal_id');
     }
 }

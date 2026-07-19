@@ -24,7 +24,7 @@ class AdminController extends Controller
 
         // Kunjungan per bulan (6 bulan terakhir)
         $kunjungan = Antrian::select(
-                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as bulan"),
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as bulan"),
                 DB::raw('COUNT(*) as total')
             )
             ->where('created_at', '>=', now()->subMonths(6))
@@ -47,6 +47,8 @@ class AdminController extends Controller
                 'tanggal'      => $a->created_at->format('d M Y H:i'),
             ]);
 
+        $totalPosyandu = \App\Models\Posyandu::count();
+
         return response()->json([
             'stats' => [
                 'total_warga'        => $totalWarga,
@@ -56,6 +58,7 @@ class AdminController extends Controller
                 'antrian_selesai'    => $antrianSelesai,
                 'pemeriksaan_bulan'  => $totalPemeriksaan,
                 'jadwal_aktif'       => $jadwalAktif,
+                'total_posyandu'     => $totalPosyandu,
             ],
             'kunjungan_bulanan' => $kunjungan,
             'antrian_terbaru'   => $antrianTerbaru,

@@ -20,16 +20,9 @@ class Antrian extends Model
         return $this->belongsTo(Jadwal::class);
     }
 
-    // Pengukuran/pemeriksaan yang terkait dengan antrian ini
+    // Pengukuran/pemeriksaan yang terkait langsung dengan antrian ini
     public function pemeriksaan()
     {
-        return $this->hasOneThrough(
-            Pemeriksaan::class,
-            Balita::class,
-            'user_id',       // FK on balitas → users
-            'balita_id',     // FK on pemeriksaans → balitas
-            'user_id',       // local key on antrians
-            'id'             // local key on balitas
-        )->where('pemeriksaans.jadwal_id', $this->jadwal_id ?? 0);
+        return $this->hasOne(Pemeriksaan::class, 'antrian_id');
     }
 }

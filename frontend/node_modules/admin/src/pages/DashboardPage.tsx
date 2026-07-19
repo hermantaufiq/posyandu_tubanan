@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Users, UserPlus, Activity, CalendarDays, TrendingUp } from 'lucide-react';
+import { Users, Activity, CalendarDays, TrendingUp } from 'lucide-react';
 import api from '../lib/api';
 
 export default function DashboardPage() {
@@ -24,11 +24,12 @@ export default function DashboardPage() {
     { title: 'Antrian Hari Ini', value: data?.stats.antrian_hari_ini || 0, icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { title: 'Pemeriksaan Bulan Ini', value: data?.stats.pemeriksaan_bulan || 0, icon: TrendingUp, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { title: 'Jadwal Aktif', value: data?.stats.jadwal_aktif || 0, icon: CalendarDays, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { title: 'Total Posyandu', value: data?.stats.total_posyandu || 0, icon: Users, color: 'text-pink-500', bg: 'bg-pink-500/10' },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {stats.map((s, i) => (
           <div key={i} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center gap-4">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${s.bg} ${s.color}`}>

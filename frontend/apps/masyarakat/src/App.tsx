@@ -6,6 +6,7 @@ import JadwalPage from './pages/JadwalPage';
 import RiwayatPage from './pages/RiwayatPage';
 import EdukasiPage from './pages/EdukasiPage';
 import AntriPage from './pages/AntriPage';
+import PengumumanPage from './pages/PengumumanPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="jadwal" element={<JadwalPage />} />
         <Route path="riwayat" element={<RiwayatPage />} />
         <Route path="edukasi" element={<EdukasiPage />} />
+        <Route path="pengumuman" element={<PengumumanPage />} />
       </Route>
     </Routes>
   );

@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, CalendarDays, Users, FileBarChart, MapPin,
-  LogOut, Menu, X, ChevronRight, Shield
+  LogOut, Menu, X, ChevronRight, Shield, Settings, Megaphone
 } from 'lucide-react';
 
 const NAV = [
-  { to: '/',         label: 'Dashboard',   icon: LayoutDashboard },
-  { to: '/jadwal',   label: 'Jadwal',      icon: CalendarDays },
-  { to: '/users',    label: 'Pengguna',    icon: Users },
-  { to: '/laporan',  label: 'Laporan',     icon: FileBarChart },
-  { to: '/posyandu', label: 'Posyandu',    icon: MapPin },
+  { to: '/',            label: 'Dashboard',   icon: LayoutDashboard },
+  { to: '/pengumuman',  label: 'Pengumuman',  icon: Megaphone },
+  { to: '/jadwal',      label: 'Jadwal',      icon: CalendarDays },
+  { to: '/users',       label: 'Pengguna',    icon: Users },
+  { to: '/laporan',     label: 'Laporan',     icon: FileBarChart },
+  { to: '/posyandu',    label: 'Posyandu',    icon: MapPin },
+  { to: '/pengaturan',  label: 'Pengaturan',  icon: Settings },
 ];
 
 export default function AdminLayout() {

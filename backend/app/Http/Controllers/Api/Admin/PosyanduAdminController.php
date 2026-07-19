@@ -10,8 +10,17 @@ class PosyanduAdminController extends Controller
 {
     public function index()
     {
-        $posyandus = Posyandu::withCount('jadwals')->get();
+        $posyandus = Posyandu::withCount(['jadwals', 'pemeriksaans'])->get();
         return response()->json(['data' => $posyandus]);
+    }
+
+    public function show($id)
+    {
+        $posyandu = Posyandu::with(['jadwals' => function($q) {
+            $q->orderBy('tanggal', 'desc')->withCount('pemeriksaans');
+        }])->findOrFail($id);
+
+        return response()->json(['data' => $posyandu]);
     }
 
     public function store(Request $request)

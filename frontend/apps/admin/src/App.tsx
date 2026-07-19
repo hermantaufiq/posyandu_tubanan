@@ -5,6 +5,8 @@ import JadwalPage from './pages/JadwalPage';
 import UsersPage from './pages/UsersPage';
 import LaporanPage from './pages/LaporanPage';
 import PosyanduPage from './pages/PosyanduPage';
+import PengaturanPage from './pages/PengaturanPage';
+import PengumumanPage from './pages/PengumumanPage';
 import AdminLayout from './layouts/AdminLayout';
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
@@ -25,6 +27,8 @@ export default function App() {
           <Route path="users" element={<UsersPage />} />
           <Route path="laporan" element={<LaporanPage />} />
           <Route path="posyandu" element={<PosyanduPage />} />
+          <Route path="pengaturan" element={<PengaturanPage />} />
+          <Route path="pengumuman" element={<PengumumanPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

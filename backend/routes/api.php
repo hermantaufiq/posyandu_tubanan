@@ -55,10 +55,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/antrian', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'index']);
         Route::post('/antrian', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'store']);
         Route::delete('/antrian/{id}', [\App\Http\Controllers\Api\Masyarakat\AntrianController::class, 'destroy']);
+
+        Route::get('/pengumuman', [\App\Http\Controllers\Api\Masyarakat\PengumumanController::class, 'index']);
     });
 
     // Portal Nakes Routes
     Route::prefix('nakes')->group(function () {
+        Route::get('/jadwal-aktif', [\App\Http\Controllers\Api\Nakes\PemeriksaanController::class, 'getJadwalAktif']);
         Route::get('/antrian', [\App\Http\Controllers\Api\Nakes\AntrianController::class, 'index']);
         Route::post('/scan-qr', [\App\Http\Controllers\Api\Nakes\AntrianController::class, 'scanQr']);
         Route::post('/input-ktp', [\App\Http\Controllers\Api\Nakes\AntrianController::class, 'inputKtp']);
@@ -68,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Portal Kader Routes
     Route::prefix('kader')->group(function () {
+        Route::get('/jadwal-aktif', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getJadwalAktif']);
         Route::get('/antrian', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getAntrian']);
         Route::post('/warga/hadir', [\App\Http\Controllers\Api\Kader\KaderController::class, 'tandaiHadir']);
         Route::post('/warga/walkin', [\App\Http\Controllers\Api\Kader\KaderController::class, 'daftarWalkIn']);
@@ -95,9 +99,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Posyandu CRUD
         Route::get('/posyandu', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'index']);
+        Route::get('/posyandu/{id}', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'show']);
         Route::post('/posyandu', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'store']);
         Route::put('/posyandu/{id}', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'update']);
         Route::delete('/posyandu/{id}', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'destroy']);
+
+        // Kode Undangan
+        Route::get('/invite-codes', [\App\Http\Controllers\Api\Admin\InviteCodeController::class, 'index']);
+        Route::put('/invite-codes', [\App\Http\Controllers\Api\Admin\InviteCodeController::class, 'update']);
+
+        // Pengumuman
+        Route::get('/pengumuman', [\App\Http\Controllers\Api\Admin\PengumumanController::class, 'index']);
+        Route::post('/pengumuman', [\App\Http\Controllers\Api\Admin\PengumumanController::class, 'store']);
+        Route::delete('/pengumuman/{id}', [\App\Http\Controllers\Api\Admin\PengumumanController::class, 'destroy']);
     });
 
     // Profile completion (for Google OAuth users)

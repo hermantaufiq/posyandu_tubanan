@@ -36,19 +36,30 @@ class LaporanController extends Controller
 
     public function pemeriksaan()
     {
-        $data = Pemeriksaan::with(['antrian.user', 'antrian.jadwal.posyandu'])
+        $data = Pemeriksaan::with(['user', 'jadwal.posyandu'])
             ->latest()
             ->get()
             ->map(fn($p) => [
-                'id'            => $p->id,
-                'tanggal'       => $p->created_at->format('d M Y'),
-                'nama'          => $p->antrian?->user?->name,
-                'jenis'         => $p->antrian?->jenis_layanan,
-                'berat_badan'   => $p->berat_badan,
-                'tinggi_badan'  => $p->tinggi_badan,
-                'lingkar_kepala'=> $p->lingkar_kepala,
-                'status_gizi'   => $p->status_gizi,
-                'posyandu'      => $p->antrian?->jadwal?->posyandu?->name,
+                'id'               => $p->id,
+                'tanggal'          => $p->created_at->format('d M Y'),
+                'nama'             => $p->user?->name ?? ($p->balita?->name ?? '-'),
+                'jenis'            => $p->jadwal?->kegiatan ?? 'Umum',
+                'berat_badan'      => $p->berat_badan,
+                'tinggi_badan'     => $p->tinggi_badan,
+                'lingkar_kepala'   => $p->lingkar_kepala,
+                'status_gizi'      => $p->status_gizi,
+                'posyandu'         => $p->jadwal?->posyandu?->name,
+
+                // Data ILP
+                'sistole'          => $p->sistole,
+                'diastole'         => $p->diastole,
+                'gula_darah'       => $p->gula_darah,
+                'skrining_tbc'     => $p->skrining_tbc,
+                'catatan_kader'    => $p->catatan_kader,
+                'catatan_keluhan'  => $p->catatan_keluhan,
+                'diagnosa_bidan'   => $p->diagnosa_bidan,
+                'is_lapor_mandiri' => str_contains($p->catatan_kader ?? '', '[Laporan Mandiri Warga]')
+                                   || str_contains($p->catatan_keluhan ?? '', '[Laporan Mandiri Warga]'),
             ]);
 
         return response()->json(['data' => $data]);

@@ -388,7 +388,8 @@ export default function DashboardNakes() {
   const [nakesUser] = useState<any>(() => {
     try { return JSON.parse(localStorage.getItem('nakes_auth_user') ?? '{}'); } catch { return {}; }
   });
-  const jadwalId = 1;
+  const [jadwalId, setJadwalId] = useState<number>(0);
+  const [jadwals, setJadwals] = useState<any[]>([]);
 
   const handleLogout = async () => {
     try { await api.post('/auth/logout'); } catch { /* ignore */ }
@@ -405,11 +406,20 @@ export default function DashboardNakes() {
     gizi_kurang:  antrians.filter(a => a.status === 'selesai' && (a.pemeriksaan?.status_gizi === 'Kurang' || a.pemeriksaan?.status_gizi === 'Buruk' || a.pemeriksaan?.status_gizi === 'Stunting')).length,
     dirujuk:      antrians.filter(a => a.status === 'selesai' && a.pemeriksaan?.dirujuk).length,
   };
+
   useEffect(() => {
+    api.get('/nakes/jadwal-aktif').then(res => {
+      setJadwals(res.data.data);
+      if (res.data.data.length > 0) setJadwalId(res.data.data[0].id);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!jadwalId) return;
     fetchAntrian();
     const interval = setInterval(fetchAntrian, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [jadwalId]);
 
   const fetchAntrian = async () => {
     try {
@@ -444,6 +454,18 @@ export default function DashboardNakes() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <select
+              value={jadwalId}
+              onChange={(e) => setJadwalId(Number(e.target.value))}
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-blue-500 focus:border-blue-500 font-medium max-w-[200px]"
+            >
+              <option value={0}>Pilih Sesi Jadwal</option>
+              {jadwals.map((j: any) => (
+                <option key={j.id} value={j.id}>
+                  {j.kegiatan} - {j.tanggal}
+                </option>
+              ))}
+            </select>
             <div className="flex items-center gap-2 text-xs bg-emerald-50 text-emerald-700 font-semibold px-3 py-1.5 rounded-full border border-emerald-200">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse inline-block" />
               Live Monitoring

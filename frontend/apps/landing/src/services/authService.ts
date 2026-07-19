@@ -92,9 +92,9 @@ export const authService = {
     // In development each portal runs on its own Vite port
     // In production these will be separate Vercel deployments
     const urls: Record<string, string> = {
-      admin:      'http://localhost:5174',
-      nakes:      'http://localhost:5175',
-      kader:      'http://localhost:5176',
+      admin:      'http://localhost:5181',
+      nakes:      'http://localhost:5178',
+      kader:      'http://localhost:5179',
       masyarakat: 'http://localhost:5177',
     };
     const baseUrl = urls[role] || '/';
