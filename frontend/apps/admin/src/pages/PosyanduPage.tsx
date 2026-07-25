@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Plus, Edit2, Trash2, MapPin, Loader2, Activity, Users, CalendarDays,
+  Plus, Edit2, Trash2, MapPin, Loader2, Activity, CalendarDays,
   ChevronRight, ArrowLeft, Clock, Stethoscope
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
