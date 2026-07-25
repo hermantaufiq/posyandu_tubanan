@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Plus, Edit2, Trash2, MapPin, Loader2, Activity, Users, CalendarDays,
-  ChevronRight, ArrowLeft, Clock, Stethoscope, ChevronDown
+  ChevronRight, ArrowLeft, Clock, Stethoscope
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../lib/api';
