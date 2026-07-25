@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
-  headers: {
+  baseURL: 'https://sipo-backend.loca.lt/api',
+  headers: { "Bypass-Tunnel-Reminder": "true",
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
