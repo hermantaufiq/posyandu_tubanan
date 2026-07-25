@@ -1,0 +1,16 @@
+{
+  "name": "SIPO Admin Tubanan",
+  "short_name": "SIPO Admin",
+  "description": "Sistem Informasi Posyandu Terpadu - Portal Admin",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

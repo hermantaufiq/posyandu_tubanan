@@ -30,7 +30,10 @@ Route::prefix('auth')->group(function () {
 // ── Nakes Register (dengan Kode Undangan) ────────────────────────────
 Route::post('/nakes/register', [RegisterNakesController::class, 'register']);
 
-// ── Kader Register (dengan Kode Undangan) ────────────────────────────
+// ── Public Posyandus List ────────────────────────────────
+Route::get('/public/posyandus', [\App\Http\Controllers\Api\Kader\RegisterKaderController::class, 'posyandus']);
+
+// ── Kader Register ────────────────────────────
 Route::post('/kader/register', [\App\Http\Controllers\Api\Kader\RegisterKaderController::class, 'register']);
 
 // ── AI Chat (Si Posya) — auth optional, public for demo ──────────────
@@ -69,13 +72,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/pemeriksaan', [\App\Http\Controllers\Api\Nakes\PemeriksaanController::class, 'store']);
     });
 
-    // Portal Kader Routes
-    Route::prefix('kader')->group(function () {
-        Route::get('/jadwal-aktif', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getJadwalAktif']);
+    // --- KADER ---
+    Route::middleware('role:kader')->prefix('kader')->group(function () {
+        Route::get('/jadwal/aktif', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getJadwalAktif']);
         Route::get('/antrian', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getAntrian']);
-        Route::post('/warga/hadir', [\App\Http\Controllers\Api\Kader\KaderController::class, 'tandaiHadir']);
-        Route::post('/warga/walkin', [\App\Http\Controllers\Api\Kader\KaderController::class, 'daftarWalkIn']);
-        Route::post('/warga/pengukuran', [\App\Http\Controllers\Api\Kader\KaderController::class, 'simpanPengukuran']);
+        Route::post('/antrian/hadir', [\App\Http\Controllers\Api\Kader\KaderController::class, 'tandaiHadir']);
+        Route::post('/antrian/walk-in', [\App\Http\Controllers\Api\Kader\KaderController::class, 'daftarWalkIn']);
+        Route::post('/pengukuran', [\App\Http\Controllers\Api\Kader\KaderController::class, 'simpanPengukuran']);
+        Route::get('/warga', [\App\Http\Controllers\Api\Kader\KaderController::class, 'getWarga']);
+        
+        // Laporan Kader (PWS & Upload Foto)
+        Route::post('/laporan/foto', [\App\Http\Controllers\Api\Kader\LaporanController::class, 'uploadFoto']);
+        Route::post('/laporan/pws', [\App\Http\Controllers\Api\Kader\LaporanController::class, 'simpanPws']);
+        Route::get('/laporan/riwayat', [\App\Http\Controllers\Api\Kader\LaporanController::class, 'riwayat']);
+    });
+
+    // --- ADMIN ---
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::apiResource('users', \App\Http\Controllers\Api\Admin\UserAdminController::class);
+        Route::apiResource('posyandus', \App\Http\Controllers\Api\Admin\PosyanduAdminController::class);
+        Route::apiResource('jadwals', \App\Http\Controllers\Api\Admin\JadwalAdminController::class);
+        Route::apiResource('pengumuman', \App\Http\Controllers\Api\Admin\PengumumanAdminController::class);
+        
+        // Laporan Kader
+        Route::get('/laporan-kader', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'index']);
+        Route::post('/laporan-kader/{id}/verifikasi', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'verifikasiFoto']);
     });
 
     // Portal Admin Routes

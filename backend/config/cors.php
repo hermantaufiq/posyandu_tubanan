@@ -22,6 +22,16 @@ return [
         'http://localhost:5179',
         'http://localhost:5180',
         'http://localhost:5181',
+        // Akses dari HP via jaringan lokal
+        'http://192.168.18.22:5173',
+        'http://192.168.18.22:5174',
+        'http://192.168.18.22:5175',
+        'http://192.168.18.22:5176',
+        'http://192.168.18.22:5177',
+        'http://192.168.18.22:5178',
+        'http://192.168.18.22:5179',
+        'http://192.168.18.22:5180',
+        'http://192.168.18.22:5181',
     ],
 
     'allowed_origins_patterns' => [],

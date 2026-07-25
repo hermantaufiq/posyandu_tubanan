@@ -4,10 +4,12 @@ import DashboardPage from './pages/DashboardPage';
 import JadwalPage from './pages/JadwalPage';
 import UsersPage from './pages/UsersPage';
 import LaporanPage from './pages/LaporanPage';
+import LaporanKaderPage from './pages/LaporanKaderPage';
 import PosyanduPage from './pages/PosyanduPage';
 import PengaturanPage from './pages/PengaturanPage';
 import PengumumanPage from './pages/PengumumanPage';
 import AdminLayout from './layouts/AdminLayout';
+import { ThemeProvider } from './components/ThemeContext';
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const token = localStorage.getItem('admin_auth_token');
@@ -16,22 +18,28 @@ function RequireAuth({ children }: { children: React.ReactElement }) {
   return children;
 }
 
+import PwaInstallBanner from './components/PwaInstallBanner';
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<RequireAuth><AdminLayout /></RequireAuth>}>
-          <Route index element={<DashboardPage />} />
-          <Route path="jadwal" element={<JadwalPage />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="laporan" element={<LaporanPage />} />
-          <Route path="posyandu" element={<PosyanduPage />} />
-          <Route path="pengaturan" element={<PengaturanPage />} />
-          <Route path="pengumuman" element={<PengumumanPage />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <PwaInstallBanner appName="SIPO Admin" />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<RequireAuth><AdminLayout /></RequireAuth>}>
+            <Route index element={<DashboardPage />} />
+            <Route path="jadwal" element={<JadwalPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="laporan" element={<LaporanPage />} />
+            <Route path="laporan-kader" element={<LaporanKaderPage />} />
+            <Route path="posyandu" element={<PosyanduPage />} />
+            <Route path="pengaturan" element={<PengaturanPage />} />
+            <Route path="pengumuman" element={<PengumumanPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

@@ -24,7 +24,7 @@ class RoleAndUserSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@posyandu-tubanan.id'],
             [
-                'name'     => 'Admin Posyandu Tubanan',
+                'name'     => 'Admin SIPO-Terpadu Tubanan',
                 'nik'      => '3312010101010001',
                 'phone'    => '081234567890',
                 'password' => Hash::make('password123'),

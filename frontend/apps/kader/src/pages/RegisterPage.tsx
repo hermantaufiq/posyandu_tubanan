@@ -3,19 +3,34 @@ import { Link } from 'react-router-dom';
 import { HeartHandshake, ArrowRight, Eye, EyeOff, KeyRound, User, Mail, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import api from '../lib/api';
 
+// Data posyandu Desa Tubanan (statis, tidak perlu fetch dari server)
+const POSYANDUS = [
+  { id: 1, name: 'Posyandu Mekar Sari' },
+  { id: 2, name: 'Posyandu Timbul Jaya' },
+  { id: 3, name: 'Posyandu Sido Jaya' },
+  { id: 4, name: 'Posyandu Sido Asih' },
+  { id: 5, name: 'Posyandu Sido Makmur' },
+  { id: 6, name: 'Posyandu Sido Mulyo' },
+  { id: 7, name: 'Posyandu Punjul Rejo' },
+];
+
 export default function RegisterPage() {
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
+    posyandu_id: '',
     invite_code: '',
   });
   const [showPwd, setShowPwd] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({}); 
+
+  // Gunakan data statis agar tidak ada loading lambat
+  const posyandus = POSYANDUS;
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
@@ -105,6 +120,27 @@ export default function RegisterPage() {
                     className={`${inputCls('password_confirmation')} pl-10`} placeholder="Ulangi sandi" />
                 </div>
               </div>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100">
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+                Pilih Posyandu Tugas Anda
+              </label>
+              <div className="relative">
+                <select required value={form.posyandu_id} onChange={e => set('posyandu_id', e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 outline-none text-sm pr-10 appearance-none bg-slate-50 ${
+                    fieldErrors.posyandu_id ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-100 focus:bg-white'
+                  }`}>
+                  <option value="" disabled>Pilih Posyandu...</option>
+                  {posyandus.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+              {fieldErrors.posyandu_id && <p className="text-red-500 text-xs mt-1">{fieldErrors.posyandu_id}</p>}
             </div>
 
             <div className="pt-2 border-t border-slate-100">

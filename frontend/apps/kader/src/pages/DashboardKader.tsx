@@ -1,462 +1,231 @@
-import { useState, useEffect } from 'react';
-import { HeartHandshake, QrCode, ClipboardEdit, LogOut, CheckCircle2, UserPlus, Search, AlertCircle, Camera } from 'lucide-react';
-import api from '../lib/api';
-import QrScannerModal from '../components/QrScannerModal';
+import { useState, useEffect } from "react";
+import { LogOut, LayoutDashboard, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRight, Sun, Moon, Download, Printer, Users } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../lib/api";
+import { useTheme } from "../components/ThemeContext";
 
 export default function DashboardKader() {
-  const [activeTab, setActiveTab] = useState<'meja1' | 'meja2' | 'meja3'>('meja1');
-  const [user] = useState(() => JSON.parse(localStorage.getItem('kader_auth_user') || '{}'));
-  const [antrians, setAntrians] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  
-  // Scanner state
-  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+  const [riwayat, setRiwayat] = useState<any>({ fotos: [], pws: [] });
+  const { theme, toggleTheme } = useTheme();
 
-  // Meja 1 Walk-in form state
-  const [walkinForm, setWalkinForm] = useState({ nik: '', name: '', jenis_layanan: 'Anak Prasekolah (0-70 bulan)' });
-
-  const [jadwalId, setJadwalId] = useState<number>(0);
-  const [jadwals, setJadwals] = useState<any[]>([]);
+  const [loadingRiwayat, setLoadingRiwayat] = useState(false);
 
   useEffect(() => {
-    api.get('/kader/jadwal-aktif').then(res => {
-      setJadwals(res.data.data);
-      if (res.data.data.length > 0) setJadwalId(res.data.data[0].id);
+    const usr = localStorage.getItem("kader_auth_user");
+    if (!usr) {
+      navigate("/login");
+    } else {
+      // Tampilkan dashboard LANGSUNG dari localStorage (tidak menunggu API)
+      setUser(JSON.parse(usr));
+      
+      // Muat riwayat di latar belakang (tidak memblokir tampilan)
+      setLoadingRiwayat(true);
+      api.get("/kader/laporan/riwayat")
+        .then(res => setRiwayat(res.data))
+        .catch(console.error)
+        .finally(() => setLoadingRiwayat(false));
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("kader_auth_token");
+    localStorage.removeItem("kader_auth_user");
+    navigate("/login");
+  };
+
+  const handleExportExcel = () => {
+    if (!riwayat.pws || riwayat.pws.length === 0) return alert("Belum ada data PWS untuk diekspor");
+    
+    const headers = ["Tanggal Kirim", "Bulan", "Tahun", "Kategori", "Data Detail"];
+    const rows = riwayat.pws.map((p: any) => {
+      const dataString = Object.entries(p.data || {}).map(([k, v]) => `${k}:${v}`).join(" | ");
+      const tgl = new Date(p.created_at).toLocaleDateString('id-ID');
+      return [
+        tgl,
+        p.bulan, 
+        p.tahun, 
+        p.kategori_sasaran, 
+        dataString
+      ].map(v => `"${v}"`).join(",");
     });
-  }, []);
-
-  useEffect(() => {
-    if (!jadwalId) return;
-    fetchAntrian();
-    const interval = setInterval(fetchAntrian, 5000);
-    return () => clearInterval(interval);
-  }, [jadwalId]);
-
-  const fetchAntrian = async () => {
-    try {
-      const res = await api.get(`/kader/antrian?jadwal_id=${jadwalId}`);
-      setAntrians(res.data.data ?? []);
-    } catch {}
+    
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "laporan_pws_kader.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const handleLogout = async () => {
-    try { await api.post('/auth/logout'); } catch {}
-    localStorage.removeItem('kader_auth_token');
-    localStorage.removeItem('kader_auth_user');
-    window.location.href = '/login';
+  const handlePrintPdf = () => {
+    window.print();
   };
-
-  const handleWalkin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true); setError('');
-    try {
-      await api.post('/kader/warga/walkin', { ...walkinForm, jadwal_id: jadwalId });
-      setWalkinForm({ nik: '', name: '', jenis_layanan: 'Anak Prasekolah (0-70 bulan)' });
-      fetchAntrian();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal mendaftarkan warga.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const tandaiHadir = async (id: number) => {
-    try {
-      await api.post('/kader/warga/hadir', { antrian_id: id });
-      fetchAntrian();
-    } catch (err) {
-      alert('Gagal menandai hadir');
-    }
-  };
-
-  const handleScanSuccess = async (text: string) => {
-    setIsScannerOpen(false);
-    try {
-      const data = JSON.parse(text);
-      if (data.app !== 'POSYANDU-TUBANAN') {
-        alert("Gagal: QR Code tidak valid atau dari aplikasi lain.");
-        return;
-      }
-
-      if (data.type === 'IDENTITAS_WARGA') {
-        // Auto-fill form pendaftaran
-        setWalkinForm(prev => ({
-          ...prev,
-          nik: data.nik || '',
-          name: data.nama || ''
-        }));
-        setActiveTab('meja1');
-        alert(`Berhasil memindai Identitas: ${data.nama}\nSilakan pilih Jenis Layanan dan klik Daftar.`);
-      } else if (data.type === 'ANTRIAN_WARGA') {
-        // Otomatis tandai hadir
-        await tandaiHadir(data.antrian_id);
-        setActiveTab('meja2');
-        alert(`Berhasil! Status ${data.nama} telah diubah menjadi Hadir (Menuju Meja 2).`);
-      } else {
-        alert("Gagal: Tipe QR Code tidak dikenali sistem.");
-      }
-    } catch (e) {
-      alert("Gagal: Format QR Code tidak terbaca. Pastikan ini adalah QR dari aplikasi Posyandu Tubanan.");
-    }
-  };
-
-  // Filter antrians by status for each Meja
-  const antrianMeja1 = antrians.filter(a => a.status === 'menunggu');
-  const antrianMeja2 = antrians.filter(a => a.status === 'hadir');
-  const antrianSelesai = antrians.filter(a => a.status === 'selesai' || a.status === 'tunggu_bidan');
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-gradient-to-br from-emerald-600 to-teal-700 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
-              <HeartHandshake className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="font-black text-slate-800 leading-tight">Portal Kader Posyandu</h1>
-              <p className="text-xs text-slate-500">Pendaftaran & Pengukuran Warga</p>
-            </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans pb-24 transition-colors duration-300">
+      {/* Header */}
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 sticky top-0 z-50 flex items-center justify-between shadow-sm dark:shadow-none">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+            <LayoutDashboard className="w-6 h-6" />
           </div>
-          <div className="flex items-center gap-4">
-            <select
-              value={jadwalId}
-              onChange={(e) => setJadwalId(Number(e.target.value))}
-              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500 font-medium max-w-[200px]"
-            >
-              <option value={0}>Pilih Sesi Jadwal</option>
-              {jadwals.map((j: any) => (
-                <option key={j.id} value={j.id}>
-                  {j.kegiatan} - {j.tanggal}
-                </option>
-              ))}
-            </select>
-            <div className="hidden md:flex flex-col text-right">
-              <span className="font-bold text-sm text-slate-800">{user.name || 'Kader'}</span>
-              <span className="text-xs text-emerald-600 font-medium">Petugas Aktif</span>
-            </div>
-            <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
+          <div>
+            <h1 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">SIPO-Terpadu Tubanan</h1>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              {user?.name} &bull; {user?.posyandu?.name ?? "Posyandu Tubanan"}
+            </p>
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={toggleTheme} className="p-2 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button onClick={handleLogout} className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-semibold text-sm transition-colors px-4 py-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl">
+            Keluar <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </header>
 
-      <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div className="flex gap-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 overflow-x-auto w-full md:w-auto">
-            <button onClick={() => setActiveTab('meja1')}
-              className={`flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all ${
-                activeTab === 'meja1' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'
-              }`}>
-              <QrCode className="w-4 h-4" /> Meja 1: Pendaftaran ({antrianMeja1.length})
-            </button>
-            <button onClick={() => setActiveTab('meja2')}
-              className={`flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all ${
-                activeTab === 'meja2' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'
-              }`}>
-              <ClipboardEdit className="w-4 h-4" /> Meja 2: Pengukuran ({antrianMeja2.length})
-            </button>
-            <button onClick={() => setActiveTab('meja3')}
-              className={`flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all ${
-                activeTab === 'meja3' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'
-              }`}>
-              <CheckCircle2 className="w-4 h-4" /> Meja 3: Pencatatan ({antrianSelesai.length})
-            </button>
+      <main className="max-w-5xl mx-auto p-6 mt-6">
+        
+        {/* Banner Sapaan */}
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 sm:p-8 text-white shadow-lg shadow-emerald-200/50 mb-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Selamat Bertugas, Kader Hebat!</h2>
+            <p className="text-emerald-50 max-w-xl">Pilih cara pelaporan yang paling mudah untuk Anda. Isi rekap PWS secara digital, atau cukup foto buku register manual Anda dan kirimkan ke Admin.</p>
+          </div>
+          <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md border border-white/30 text-center min-w-[150px]">
+            <p className="text-4xl font-black">
+              {loadingRiwayat ? "..." : (riwayat.fotos?.length || 0) + (riwayat.pws?.length || 0)}
+            </p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-50 mt-1">Laporan Terkirim</p>
+          </div>
+        </div>
+
+        {/* Navigator Menu */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          {/* Card 0: Pelaksanaan Posyandu */}
+          <Link to="/pelaksanaan" className="group bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-slate-100 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl hover:shadow-blue-100 dark:hover:shadow-blue-900/20 transition-all cursor-pointer relative overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-bl-xl shadow-sm">Utama</div>
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Users className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Pelaksanaan Hari Ini</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 line-clamp-3">Buka pendaftaran, scan barcode warga, dan input pengukuran awal (Meja 1 & 2).</p>
+            <div className="mt-auto flex items-center justify-between text-blue-600 dark:text-blue-400 font-bold text-sm">
+              <span>Mulai Posyandu</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card: Cetak Barcode */}
+          <Link to="/cetak-barcode" className="group bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-slate-100 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-cyan-500 hover:shadow-xl hover:shadow-cyan-100 dark:hover:shadow-cyan-900/20 transition-all cursor-pointer relative overflow-hidden flex flex-col h-full">
+            <div className="w-16 h-16 bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Printer className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Cetak Stiker Barcode</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 line-clamp-3">Cetak kode QR warga secara massal untuk ditempel ke Buku KIA / KMS.</p>
+            <div className="mt-auto flex items-center justify-between text-cyan-600 dark:text-cyan-400 font-bold text-sm">
+              <span>Cetak Sekarang</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 1: PWS Digital */}
+          <Link to="/laporan-pws" className="group bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-slate-100 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-xl hover:shadow-emerald-100 dark:hover:shadow-emerald-900/20 transition-all cursor-pointer relative overflow-hidden flex flex-col h-full">
+            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <FileSpreadsheet className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Laporan PWS Digital</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 line-clamp-3">Isi angka rekapitulasi PWS langsung ke sistem untuk direkap Admin.</p>
+            <div className="mt-auto flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+              <span>Isi Laporan</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 2: Upload Foto Manual */}
+          <Link to="/upload-foto" className="group bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-slate-100 dark:border-slate-800 hover:border-violet-400 dark:hover:border-violet-500 hover:shadow-xl hover:shadow-violet-100 dark:hover:shadow-violet-900/20 transition-all cursor-pointer relative overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 right-0 bg-amber-400 dark:bg-amber-500 text-amber-900 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-bl-xl">Alternatif</div>
+            
+            <div className="w-16 h-16 bg-violet-100 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Camera className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Upload Foto Register</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 line-clamp-3">Foto lembar buku register manual Anda dan kirimkan ke admin jika tidak sempat.</p>
+            <div className="mt-auto flex items-center justify-between text-violet-600 dark:text-violet-400 font-bold text-sm">
+              <span>Upload Foto</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+            </div>
+          </Link>
+
+        </div>
+
+        {/* Riwayat Singkat */}
+        <div className="mt-12 print:mt-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">Riwayat Laporan Anda</h3>
+            <div className="flex gap-2 print:hidden">
+              <button onClick={handleExportExcel} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                <Download className="w-3.5 h-3.5" /> Unduh Excel
+              </button>
+              <button onClick={handlePrintPdf} className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                <Printer className="w-3.5 h-3.5" /> Cetak PDF
+              </button>
+            </div>
           </div>
           
-          <button 
-            onClick={() => setIsScannerOpen(true)}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-md shadow-blue-200 transition-colors whitespace-nowrap"
-          >
-            <Camera className="w-5 h-5" />
-            Scan QR Warga
-          </button>
-        </div>
-
-        <QrScannerModal 
-          isOpen={isScannerOpen} 
-          onClose={() => setIsScannerOpen(false)} 
-          onScanSuccess={handleScanSuccess} 
-        />
-
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8 min-h-[400px]">
-          {activeTab === 'meja1' && (
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Walk-in Form */}
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <UserPlus className="w-5 h-5 text-emerald-600" />
-                  <h2 className="text-lg font-bold text-slate-800">Daftar Warga Baru (Walk-in)</h2>
-                </div>
-                {error && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 text-red-700 text-xs">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                    <p>{error}</p>
-                  </div>
-                )}
-                <form onSubmit={handleWalkin} className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
-                    <input type="text" required value={walkinForm.name} onChange={e => setWalkinForm({...walkinForm, name: e.target.value})}
-                      className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">NIK (16 Digit)</label>
-                    <input type="text" required maxLength={16} minLength={16} value={walkinForm.nik} onChange={e => setWalkinForm({...walkinForm, nik: e.target.value})}
-                      className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Jenis Layanan</label>
-                    <select value={walkinForm.jenis_layanan} onChange={e => setWalkinForm({...walkinForm, jenis_layanan: e.target.value})}
-                      className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500">
-                      <option value="Anak Prasekolah (0-70 bulan)">Anak Prasekolah (0-70 bln)</option>
-                      <option value="Ibu Hamil">Ibu Hamil</option>
-                      <option value="Ibu Nifas dan Menyusui">Ibu Nifas dan Menyusui</option>
-                      <option value="Anak Sekolah dan Remaja">Anak Sekolah dan Remaja</option>
-                      <option value="Usia Produktif">Usia Produktif</option>
-                      <option value="Lansia">Lansia</option>
-                    </select>
-                  </div>
-                  <button type="submit" disabled={loading} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm transition-colors">
-                    {loading ? 'Menyimpan...' : 'Daftarkan & Masukkan Antrian'}
-                  </button>
-                </form>
-              </div>
-
-              {/* Waiting List */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Search className="w-5 h-5 text-emerald-600" />
-                    <h2 className="text-lg font-bold text-slate-800">Menunggu Kehadiran</h2>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  {antrianMeja1.length === 0 ? (
-                    <p className="text-sm text-slate-500 text-center py-8">Tidak ada warga yang menunggu.</p>
-                  ) : (
-                    antrianMeja1.map(a => (
-                      <div key={a.id} className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between shadow-sm">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <p className="font-bold text-slate-800 text-sm">{a.user?.name}</p>
-                            {/* Badge Sasaran / Pengunjung */}
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              (a.user?.kategori_warga || 'sasaran') === 'sasaran'
-                                ? 'bg-emerald-100 text-emerald-700'
-                                : 'bg-amber-100 text-amber-700'
-                            }`}>
-                              {(a.user?.kategori_warga || 'sasaran') === 'sasaran' ? '🏠 SASARAN' : '🌍 PENGUNJUNG'}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-500">Antrian: {a.nomor_antri} • {a.jenis_layanan}</p>
-                          {a.user?.kategori_warga === 'pengunjung' && a.user?.alamat_asal && (
-                            <p className="text-xs text-amber-600 mt-0.5">Asal: {a.user.alamat_asal}</p>
-                          )}
-                        </div>
-                        <button onClick={() => tandaiHadir(a.id)} className="ml-3 px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-xs font-bold rounded-lg transition-colors">
-                          Tandai Hadir
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'meja2' && (
-             <div>
-                <div className="flex items-center gap-2 mb-6">
-                  <ClipboardEdit className="w-5 h-5 text-emerald-600" />
-                  <h2 className="text-lg font-bold text-slate-800">Antrian Pengukuran (Meja 2)</h2>
-                </div>
-                <div className="space-y-4">
-                  {antrianMeja2.length === 0 ? (
-                    <p className="text-sm text-slate-500 text-center py-8">Belum ada warga di Meja 2.</p>
-                  ) : (
-                    antrianMeja2.map(a => (
-                      <Meja2Card key={a.id} antrian={a} onSaved={fetchAntrian} />
-                    ))
-                  )}
-                </div>
-             </div>
-          )}
-          {activeTab === 'meja3' && (
-             <div>
-                <div className="flex items-center gap-2 mb-6">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                  <h2 className="text-lg font-bold text-slate-800">Pencatatan & Monitoring (Meja 3 & Selesai)</h2>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                     <p className="text-emerald-700 font-bold text-2xl">{antrians.length}</p>
-                     <p className="text-emerald-600 text-xs font-semibold uppercase">Total Antrian</p>
-                  </div>
-                  <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                     <p className="text-amber-700 font-bold text-2xl">{antrianMeja2.length}</p>
-                     <p className="text-amber-600 text-xs font-semibold uppercase">Di Meja 2</p>
-                  </div>
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                     <p className="text-blue-700 font-bold text-2xl">{antrians.filter(a => a.status === 'tunggu_bidan').length}</p>
-                     <p className="text-blue-600 text-xs font-semibold uppercase">Di Bidan</p>
-                  </div>
-                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                     <p className="text-slate-700 font-bold text-2xl">{antrians.filter(a => a.status === 'selesai').length}</p>
-                     <p className="text-slate-500 text-xs font-semibold uppercase">Selesai</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  {antrianSelesai.map(a => (
-                    <div key={a.id} className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between shadow-sm">
-                      <div>
-                        <p className="font-bold text-slate-800 text-sm">{a.user?.name}</p>
-                        <p className="text-xs text-slate-500">{a.jenis_layanan} • BB: {a.pemeriksaan?.berat_badan}kg TB: {a.pemeriksaan?.tinggi_badan}cm</p>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${a.status === 'selesai' ? 'bg-slate-100 text-slate-600' : 'bg-blue-100 text-blue-700'}`}>
-                        {a.status === 'selesai' ? 'Selesai' : 'Di Bidan'}
-                      </span>
-                    </div>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden print:border-none print:shadow-none">
+            {riwayat.fotos?.length === 0 && riwayat.pws?.length === 0 ? (
+              <div className="p-8 text-center text-slate-400 dark:text-slate-500">Belum ada laporan yang dikirimkan.</div>
+            ) : (
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
+                  <tr>
+                    <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400">Tanggal Kirim</th>
+                    <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400">Bulan Laporan</th>
+                    <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400">Jenis</th>
+                    <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400">Kategori Sasaran</th>
+                    <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {riwayat.fotos?.map((f: any) => (
+                    <tr key={`f-${f.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(f.created_at).toLocaleDateString('id-ID')}</td>
+                      <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{f.bulan} {f.tahun}</td>
+                      <td className="px-6 py-4"><span className="bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-violet-700 print:bg-transparent">Foto Manual</span></td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{f.kategori}</td>
+                      <td className="px-6 py-4 text-right">
+                        {f.status === 'terverifikasi' 
+                          ? <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Diterima</span>
+                          : <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs"><AlertTriangle className="w-4 h-4"/> Menunggu</span>
+                        }
+                      </td>
+                    </tr>
                   ))}
-                </div>
-             </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Komponen Card untuk form Pengukuran
-// Komponen Card untuk form Pengukuran
-function Meja2Card({ antrian, onSaved }: { antrian: any, onSaved: () => void }) {
-  const isBalita = antrian.jenis_layanan?.includes('Prasekolah');
-  const isDewasa = !isBalita; // Dewasa, Remaja, Lansia, Ibu Nifas
-
-  const [form, setForm] = useState({ 
-    berat_badan: '', 
-    tinggi_badan: '', 
-    lingkar_kepala: '',
-    lingkar_perut: '',
-    tensi: '',
-    gula_darah: ''
-  });
-
-  const [tbc, setTbc] = useState([false, false, false, false]);
-  const [loading, setLoading] = useState(false);
-
-  const save = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await api.post('/kader/warga/pengukuran', {
-        antrian_id: antrian.id,
-        berat_badan: form.berat_badan ? parseFloat(form.berat_badan) : null,
-        tinggi_badan: form.tinggi_badan ? parseFloat(form.tinggi_badan) : null,
-        lingkar_kepala: form.lingkar_kepala ? parseFloat(form.lingkar_kepala) : null,
-        lingkar_perut: form.lingkar_perut ? parseFloat(form.lingkar_perut) : null,
-        tensi: form.tensi || null,
-        gula_darah: form.gula_darah ? parseFloat(form.gula_darah) : null,
-        skrining_tbc: tbc,
-      });
-      onSaved();
-    } catch {
-      alert('Gagal menyimpan pengukuran');
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="p-5 rounded-2xl border border-emerald-100 bg-emerald-50/50 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <p className="font-bold text-slate-800">{antrian.user?.name}</p>
-          <p className="text-xs text-slate-500">Antrian: {antrian.nomor_antri} • {antrian.jenis_layanan}</p>
-        </div>
-      </div>
-      <form onSubmit={save} className="space-y-5">
-        
-        {/* SECTION 1: PENGUKURAN */}
-        <div className="bg-white p-4 rounded-xl border border-emerald-100">
-          <p className="text-xs font-bold text-emerald-700 mb-3 uppercase tracking-wider">Meja 2: Penimbangan & Pengukuran</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">BB (kg)</label>
-              <input type="number" step="0.1" required value={form.berat_badan} onChange={e => setForm({...form, berat_badan: e.target.value})}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">TB/PB (cm)</label>
-              <input type="number" step="0.1" required value={form.tinggi_badan} onChange={e => setForm({...form, tinggi_badan: e.target.value})}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-            </div>
-            {isBalita && (
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">L. Kepala (cm)</label>
-                <input type="number" step="0.1" value={form.lingkar_kepala} onChange={e => setForm({...form, lingkar_kepala: e.target.value})}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-              </div>
-            )}
-            {isDewasa && (
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">L. Perut (cm)</label>
-                <input type="number" step="0.1" value={form.lingkar_perut} onChange={e => setForm({...form, lingkar_perut: e.target.value})}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-              </div>
-            )}
-            {isDewasa && (
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Tensi Darah</label>
-                <input type="text" placeholder="120/80" value={form.tensi} onChange={e => setForm({...form, tensi: e.target.value})}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-              </div>
-            )}
-            {isDewasa && (
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Gula Darah</label>
-                <input type="number" placeholder="mg/dL" value={form.gula_darah} onChange={e => setForm({...form, gula_darah: e.target.value})}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" />
-              </div>
+                  {riwayat.pws?.map((p: any) => (
+                    <tr key={`p-${p.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(p.created_at).toLocaleDateString('id-ID')}</td>
+                      <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{p.bulan} {p.tahun}</td>
+                      <td className="px-6 py-4"><span className="bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-blue-700 print:bg-transparent">PWS Digital</span></td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{p.kategori_sasaran}</td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Otomatis Rekap</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>
-
-        {/* SECTION 2: SKRINING TBC */}
-        <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-100">
-          <p className="text-xs font-bold text-amber-700 mb-3 uppercase tracking-wider">Meja 3: Skrining TBC (4 Indikator)</p>
-          <div className="space-y-2">
-            {[
-              "Apakah mengalami batuk berdahak > 2 minggu?",
-              "Apakah mengalami demam hilang timbul > 1 bulan?",
-              "Apakah berkeringat malam hari tanpa aktivitas fisik?",
-              "Apakah ada penurunan berat badan drastis tanpa sebab?"
-            ].map((pertanyaan, i) => (
-              <label key={i} className="flex items-start gap-3 p-2 bg-white rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-50">
-                <input 
-                  type="checkbox" 
-                  checked={tbc[i]}
-                  onChange={e => {
-                    const newTbc = [...tbc];
-                    newTbc[i] = e.target.checked;
-                    setTbc(newTbc);
-                  }}
-                  className="mt-1 w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500" 
-                />
-                <span className="text-sm text-slate-700 leading-tight">{pertanyaan}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-end">
-          <button type="submit" disabled={loading} className="px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition-colors shadow-sm shadow-emerald-200">
-            {loading ? 'Menyimpan...' : 'Simpan & Lanjut ke Meja 4 (Bidan)'}
-          </button>
-        </div>
-      </form>
+      </main>
     </div>
   );
 }

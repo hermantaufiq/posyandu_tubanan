@@ -87,8 +87,10 @@ class KaderController extends Controller
         $request->validate([
             'nik' => 'required|string|size:16',
             'name' => 'required|string|max:255',
-            'jenis_layanan' => 'required|string|in:Balita dan Anak Prasekolah,Ibu Hamil,Ibu Nifas dan Menyusui,Anak Usia Sekolah dan Remaja,Usia Produktif,Lansia',
+            'jenis_layanan' => 'required|string',
             'jadwal_id' => 'required|exists:jadwal_posyandus,id',
+            'date_of_birth' => 'nullable|date',
+            'address' => 'nullable|string',
         ]);
 
         // Cek atau buat user berdasarkan NIK
@@ -100,6 +102,9 @@ class KaderController extends Controller
                 'email' => $request->nik . '@walkin.posyandu.id',
                 'password' => Hash::make($request->nik), // default password is NIK
                 'is_active' => true,
+                'date_of_birth' => $request->date_of_birth,
+                'address' => $request->address,
+                'kategori_warga' => $request->jenis_layanan,
             ]);
             $user->assignRole('masyarakat');
         }
@@ -202,5 +207,38 @@ class KaderController extends Controller
             'message' => 'Pengukuran ILP berhasil disimpan. Lanjut ke Meja 4 (Bidan).',
             'data' => $pemeriksaan
         ]);
+    }
+
+    /**
+     * Dapatkan daftar warga (masyarakat) untuk keperluan Cetak Barcode Massal.
+     * Mengambil warga yang terdaftar di posyandu yang sama dengan Kader, 
+     * atau warga tanpa posyandu jika kader melayani semuanya.
+     */
+    public function getWarga(Request $request)
+    {
+        $kader = $request->user();
+        
+        $query = User::role('masyarakat')
+                     ->where('is_active', true)
+                     ->orderBy('name', 'asc');
+        
+        // Filter warga by posyandu if kader belongs to one
+        if ($kader->posyandu_id) {
+            $query->where(function($q) use ($kader) {
+                $q->where('posyandu_id', $kader->posyandu_id)
+                  ->orWhereNull('posyandu_id');
+            });
+        }
+
+        if ($request->has('search')) {
+            $s = $request->query('search');
+            $query->where(function($q) use ($s) {
+                $q->where('name', 'like', "%{$s}%")
+                  ->orWhere('nik', 'like', "%{$s}%");
+            });
+        }
+
+        $warga = $query->paginate(50);
+        return response()->json(['success' => true, 'data' => $warga]);
     }
 }

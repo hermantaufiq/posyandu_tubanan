@@ -13,12 +13,18 @@ class RegisterKaderController extends Controller
      * Register Kader Posyandu dengan Kode Undangan.
      * Kode undangan disimpan di .env sebagai KADER_INVITE_CODE.
      */
+    public function posyandus()
+    {
+        return response()->json(\App\Models\Posyandu::select('id', 'name')->get());
+    }
+
     public function register(Request $request)
     {
         $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email',
             'password'      => 'required|string|min:8|confirmed',
+            'posyandu_id'   => 'required|exists:posyandus,id',
             'invite_code'   => 'required|string',
         ]);
 
@@ -33,10 +39,11 @@ class RegisterKaderController extends Controller
 
         // Buat akun Kader
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'is_active' => true,
+            'name'        => $request->name,
+            'email'       => $request->email,
+            'password'    => Hash::make($request->password),
+            'posyandu_id' => $request->posyandu_id,
+            'is_active'   => true,
         ]);
 
         // Assign role kader
@@ -45,16 +52,19 @@ class RegisterKaderController extends Controller
         // Auto-login: buat token
         $token = $user->createToken('auth-token', ['kader'])->plainTextToken;
 
+        $user->load('posyandu');
+
         return response()->json([
             'success' => true,
             'message' => 'Akun Kader Posyandu berhasil dibuat.',
             'data' => [
                 'user'  => [
-                    'id'    => $user->id,
-                    'name'  => $user->name,
-                    'email' => $user->email,
-                    'role'  => 'kader',
-                    'roles' => ['kader'],
+                    'id'       => $user->id,
+                    'name'     => $user->name,
+                    'email'    => $user->email,
+                    'posyandu' => $user->posyandu,
+                    'role'     => 'kader',
+                    'roles'    => ['kader'],
                 ],
                 'token' => $token,
                 'token_type' => 'Bearer',

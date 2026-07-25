@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Calendar, MapPin, Clock } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, MapPin, Clock, Printer } from 'lucide-react';
 import api from '../lib/api';
 
 export default function JadwalPage() {
@@ -14,7 +14,7 @@ export default function JadwalPage() {
     try {
       const [jadwalRes, posRes] = await Promise.all([
         api.get('/admin/jadwal'),
-        api.get('/admin/posyandu')
+        api.get('/admin/posyandus')
       ]);
       setJadwals(jadwalRes.data.data);
       setPosyandus(posRes.data.data);
@@ -70,24 +70,38 @@ export default function JadwalPage() {
           <h2 className="text-xl font-bold text-slate-200">Manajemen Jadwal Posyandu</h2>
           <p className="text-sm text-slate-400">Atur jadwal kegiatan posyandu di desa Tubanan</p>
         </div>
-        <button
-          onClick={() => { setForm({ id: '', posyandu_id: '', tanggal: '', waktu_mulai: '08:00', waktu_selesai: '12:00', kegiatan: '', kapasitas: '' }); setShowModal(true); }}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors w-fit"
-        >
-          <Plus className="w-4 h-4" /> Tambah Jadwal
-        </button>
+        <div className="flex gap-2 print:hidden">
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors w-fit"
+          >
+            <Printer className="w-4 h-4" /> Cetak Jadwal
+          </button>
+          <button
+            onClick={() => { setForm({ id: '', posyandu_id: '', tanggal: '', waktu_mulai: '08:00', waktu_selesai: '12:00', kegiatan: '', kapasitas: '' }); setShowModal(true); }}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors w-fit"
+          >
+            <Plus className="w-4 h-4" /> Tambah Jadwal
+          </button>
+        </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-400">
-            <thead className="bg-slate-800/50 text-slate-300 font-semibold border-b border-slate-800">
+      <div className="hidden print:block mb-8 text-center text-black">
+        <h1 className="text-2xl font-black uppercase mb-1">Jadwal Kegiatan Posyandu</h1>
+        <p className="text-lg font-bold">Desa Tubanan, Kec. Kembang</p>
+        <hr className="my-4 border-2 border-black" />
+      </div>
+
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden print:bg-white print:border-none print:shadow-none">
+        <div className="overflow-x-auto print:overflow-visible">
+          <table className="w-full text-left text-sm text-slate-400 print:text-black print:border-collapse">
+            <thead className="bg-slate-800/50 text-slate-300 font-semibold border-b border-slate-800 print:bg-slate-100 print:text-black">
               <tr>
-                <th className="px-5 py-4">Tanggal & Waktu</th>
-                <th className="px-5 py-4">Kegiatan</th>
-                <th className="px-5 py-4">Posyandu</th>
-                <th className="px-5 py-4 text-center">Pendaftar</th>
-                <th className="px-5 py-4 text-right">Aksi</th>
+                <th className="px-5 py-4 print:border print:border-black">Tanggal & Waktu</th>
+                <th className="px-5 py-4 print:border print:border-black">Kegiatan</th>
+                <th className="px-5 py-4 print:border print:border-black">Posyandu</th>
+                <th className="px-5 py-4 text-center print:border print:border-black">Pendaftar/Kapasitas</th>
+                <th className="px-5 py-4 text-right print:hidden">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
@@ -97,27 +111,27 @@ export default function JadwalPage() {
                 <tr><td colSpan={5} className="text-center py-8">Belum ada jadwal.</td></tr>
               ) : jadwals.map(j => (
                 <tr key={j.id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-2 text-slate-200 font-medium mb-1">
-                      <Calendar className="w-4 h-4 text-blue-500" /> {new Date(j.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  <td className="px-5 py-4 print:border print:border-black">
+                    <div className="flex items-center gap-2 text-slate-200 print:text-black font-medium mb-1">
+                      <Calendar className="w-4 h-4 text-blue-500 print:hidden" /> {new Date(j.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <Clock className="w-3.5 h-3.5" /> {j.waktu_mulai.substring(0,5)} - {j.waktu_selesai.substring(0,5)} WIB
+                    <div className="flex items-center gap-2 text-xs print:text-black">
+                      <Clock className="w-3.5 h-3.5 print:hidden" /> {j.waktu_mulai.substring(0,5)} - {j.waktu_selesai.substring(0,5)} WIB
                     </div>
                   </td>
-                  <td className="px-5 py-4 font-medium text-slate-200">{j.kegiatan}</td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-500" />
+                  <td className="px-5 py-4 font-medium text-slate-200 print:text-black print:border print:border-black">{j.kegiatan}</td>
+                  <td className="px-5 py-4 print:border print:border-black">
+                    <div className="flex items-center gap-2 print:text-black">
+                      <MapPin className="w-4 h-4 text-emerald-500 print:hidden" />
                       {j.posyandu.name}
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-center">
-                    <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 font-bold text-xs border border-blue-500/20">
+                  <td className="px-5 py-4 text-center print:border print:border-black">
+                    <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 print:bg-transparent print:text-black print:border-none font-bold text-xs border border-blue-500/20">
                       {j.antrian_count} {j.kapasitas ? `/ ${j.kapasitas}` : ''}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-right">
+                  <td className="px-5 py-4 text-right print:hidden">
                     <button onClick={() => handleEdit(j)} className="p-2 text-slate-400 hover:text-blue-400 transition-colors"><Edit2 className="w-4 h-4" /></button>
                     <button onClick={() => handleDelete(j.id)} className="p-2 text-slate-400 hover:text-rose-400 transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </td>

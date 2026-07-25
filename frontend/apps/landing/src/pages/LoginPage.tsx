@@ -71,7 +71,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">+</div>
           <div>
-            <p className="text-white font-bold text-lg leading-tight">Posyandu Tubanan</p>
+            <p className="text-white font-bold text-lg leading-tight">SIPO-Terpadu Tubanan</p>
             <p className="text-blue-300 text-xs">Sistem Manajemen Digital</p>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function LoginPage() {
           {/* Mobile Logo */}
           <div className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">+</div>
-            <p className="text-white font-bold text-base">Posyandu Tubanan</p>
+            <p className="text-white font-bold text-base">SIPO-Terpadu Tubanan</p>
           </div>
 
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">

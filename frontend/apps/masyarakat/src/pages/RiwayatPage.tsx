@@ -334,15 +334,36 @@ function TabMandiri({ onSuccess }: { onSuccess: () => void }) {
           </div>
 
           {/* Live IMT preview */}
-          {imt && (
-            <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+          {imt ? (
+            <div className={`mt-4 p-4 rounded-xl border-2 flex items-center justify-between gap-4 transition-all ${
+              parseFloat(imt) < 18.5 ? 'bg-blue-50 border-blue-300' :
+              parseFloat(imt) < 25   ? 'bg-emerald-50 border-emerald-300' :
+              parseFloat(imt) < 27   ? 'bg-amber-50 border-amber-300' :
+                                       'bg-red-50 border-red-300'
+            }`}>
               <div>
-                <p className="text-xs text-slate-500">IMT Anda (perhitungan otomatis)</p>
-                <p className="text-2xl font-black text-slate-800">{imt} <span className="text-sm font-medium text-slate-500">kg/m²</span></p>
+                <p className="text-xs text-slate-500 font-medium">IMT Anda (perhitungan otomatis)</p>
+                <p className="text-3xl font-black text-slate-800 mt-0.5">{imt} <span className="text-sm font-medium text-slate-500">kg/m²</span></p>
               </div>
-              <span className="text-sm font-bold bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">{kategoriIMT}</span>
+              <div className={`text-center px-4 py-2 rounded-xl font-bold text-sm shadow-sm ${
+                parseFloat(imt) < 18.5 ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                parseFloat(imt) < 25   ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
+                parseFloat(imt) < 27   ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                                         'bg-red-100 text-red-700 border border-red-200'
+              }`}>
+                <p className="text-lg">{
+                  parseFloat(imt) < 18.5 ? '🔵' :
+                  parseFloat(imt) < 25   ? '✅' :
+                  parseFloat(imt) < 27   ? '⚠️' : '🔴'
+                }</p>
+                <p>{kategoriIMT?.split(' ')[0]}</p>
+              </div>
             </div>
-          )}
+          ) : form.berat_badan && !form.tinggi_badan ? (
+            <p className="text-xs text-slate-400 mt-3 text-center">Isi Tinggi Badan untuk menghitung IMT otomatis</p>
+          ) : form.tinggi_badan && !form.berat_badan ? (
+            <p className="text-xs text-slate-400 mt-3 text-center">Isi Berat Badan untuk menghitung IMT otomatis</p>
+          ) : null}
         </div>
 
         {/* Bagian 2: Skrining TBC (Tabel Ya/Tidak) */}

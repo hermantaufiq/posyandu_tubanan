@@ -1,0 +1,16 @@
+{
+  "name": "SIPO Kader Tubanan",
+  "short_name": "SIPO Kader",
+  "description": "Sistem Informasi Posyandu Terpadu - Portal Kader",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -39,7 +39,7 @@ export default function LoginPage() {
             <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
               <HeartHandshake className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-black mb-2">Portal Kader Posyandu</h1>
+            <h1 className="text-3xl font-black mb-2">SIPO-Terpadu Tubanan</h1>
             <p className="text-emerald-100 text-sm leading-relaxed">Meja 1, 2 & 3 — Pendaftaran, Pengukuran & Pencatatan KMS</p>
           </div>
           <div className="relative z-10 mt-10 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -85,7 +85,7 @@ export default function LoginPage() {
               </div>
               <button type="submit" disabled={loading}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 mt-2">
-                {loading ? 'Memverifikasi...' : <><span>Masuk ke Portal Kader</span><ArrowRight className="w-4 h-4" /></>}
+                {loading ? 'Memverifikasi...' : <><span>Masuk ke SIPO-Terpadu Tubanan</span><ArrowRight className="w-4 h-4" /></>}
               </button>
             </form>
 

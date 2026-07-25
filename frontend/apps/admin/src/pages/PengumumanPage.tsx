@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Megaphone, Plus, Trash2, Copy, CheckCircle,
-  Calendar, Syringe, Heart, Info, Loader2, MessageCircle
+  Calendar, Syringe, Heart, Info, Loader2, MessageCircle, Printer
 } from "lucide-react";
 import api from "../lib/api";
 
@@ -80,15 +80,29 @@ export default function PengumumanPage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <div>
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Megaphone className="w-5 h-5 text-amber-400" /> Pengumuman
-        </h2>
-        <p className="text-slate-400 text-sm mt-1">Buat pengumuman untuk warga. Bagikan ke WhatsApp grup dengan satu klik.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-white flex items-center gap-2 print:hidden">
+            <Megaphone className="w-5 h-5 text-amber-400" /> Pengumuman
+          </h2>
+          <p className="text-slate-400 text-sm mt-1 print:hidden">Buat pengumuman untuk warga. Bagikan ke WhatsApp grup dengan satu klik.</p>
+        </div>
+        <button
+          onClick={() => window.print()}
+          className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors w-fit print:hidden"
+        >
+          <Printer className="w-4 h-4" /> Cetak Pengumuman
+        </button>
+      </div>
+
+      <div className="hidden print:block mb-8 text-center text-black">
+        <h1 className="text-2xl font-black uppercase mb-1">Pengumuman Posyandu</h1>
+        <p className="text-lg font-bold">Desa Tubanan, Kec. Kembang</p>
+        <hr className="my-4 border-2 border-black" />
       </div>
 
       {/* Form Buat Pengumuman */}
-      <form onSubmit={submit} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+      <form onSubmit={submit} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 print:hidden">
         <h3 className="font-semibold text-white text-sm">📝 Buat Pengumuman Baru</h3>
 
         {/* Kategori */}
@@ -163,23 +177,23 @@ export default function PengumumanPage() {
             const ki = kategoriInfo(p.kategori);
             const KIcon = ki.icon;
             return (
-              <div key={p.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+              <div key={p.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 print:bg-white print:border-b print:border-black print:rounded-none print:p-4 print:mb-4">
                 <div className="flex items-start gap-3">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${ki.color}`}>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${ki.color} print:hidden`}>
                     <KIcon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                      <p className="font-semibold text-white text-sm">{p.judul}</p>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full border ${ki.color}`}>{ki.label}</span>
+                      <p className="font-semibold text-white print:text-black text-sm print:text-lg">{p.judul}</p>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full border ${ki.color} print:text-black print:border-black`}>{ki.label}</span>
                     </div>
-                    <p className="text-slate-400 text-sm whitespace-pre-wrap mt-1 mb-2">{p.isi}</p>
-                    <p className="text-slate-600 text-xs">oleh {p.oleh} · {p.tanggal}</p>
+                    <p className="text-slate-400 print:text-black text-sm whitespace-pre-wrap mt-1 mb-2 leading-relaxed">{p.isi}</p>
+                    <p className="text-slate-600 print:text-slate-500 text-xs font-medium">oleh {p.oleh} · {p.tanggal}</p>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800">
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800 print:hidden">
                   {/* Preview WA text */}
                   <button
                     onClick={() => copyText(p)}

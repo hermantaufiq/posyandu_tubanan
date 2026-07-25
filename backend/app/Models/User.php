@@ -29,6 +29,7 @@ class User extends Authenticatable
         'needs_nik_completion',
         'kategori_warga',
         'alamat_asal',
+        'posyandu_id', // Add this
     ];
 
     protected $hidden = [
@@ -45,5 +46,10 @@ class User extends Authenticatable
             'is_active'            => 'boolean',
             'needs_nik_completion' => 'boolean',
         ];
+    }
+
+    public function posyandu()
+    {
+        return $this->belongsTo(Posyandu::class);
     }
 }

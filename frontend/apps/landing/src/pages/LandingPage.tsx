@@ -44,8 +44,8 @@ export default function LandingPage() {
               +
             </div>
             <div>
-              <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">Posyandu Tubanan</span>
-              <span className="hidden sm:block text-xs text-slate-400 leading-none">Desa Tubanan, Kec. Keling</span>
+              <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">SIPO-Terpadu Tubanan</span>
+              <span className="hidden sm:block text-xs text-slate-400 leading-none">Desa Tubanan, Kec. Kembang</span>
             </div>
           </div>
 
@@ -351,7 +351,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">+</div>
-                  <span className="text-white font-bold">Posyandu Tubanan</span>
+                  <span className="text-white font-bold">SIPO-Terpadu Tubanan</span>
                 </div>
                 <p className="text-sm leading-relaxed">Platform digital pelayanan Posyandu Desa Tubanan berbasis 6 Standar Pelayanan Minimal (SPM).</p>
               </div>
@@ -366,7 +366,7 @@ export default function LandingPage() {
               <div>
                 <h4 className="text-white font-semibold mb-3">Kontak</h4>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2"><MapPin className="w-4 h-4 shrink-0" /> Desa Tubanan, Kec. Keling, Jepara</li>
+                  <li className="flex items-center gap-2"><MapPin className="w-4 h-4 shrink-0" /> Desa Tubanan, Kec. Kembang, Jepara</li>
                   <li className="flex items-center gap-2"><Phone className="w-4 h-4 shrink-0" /> (0291) 123-456</li>
                 </ul>
               </div>

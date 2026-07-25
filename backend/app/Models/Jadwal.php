@@ -19,4 +19,9 @@ class Jadwal extends Model
     {
         return $this->hasMany(Pemeriksaan::class, 'jadwal_id');
     }
+
+    public function antrians()
+    {
+        return $this->hasMany(Antrian::class, 'jadwal_id');
+    }
 }

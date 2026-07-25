@@ -53,8 +53,8 @@ class RiwayatController extends Controller
                 'tanggal'       => $p->created_at->format('Y-m-d'),
                 'tanggal_label' => $p->created_at->translatedFormat('d M Y'),
                 'bulan_label'   => $p->created_at->translatedFormat('F Y'),
-                'posyandu'      => $p->jadwal->posyandu->name ?? 'Posyandu Tubanan',
-                'sumber'        => 'kader', // future: 'mandiri'
+                'posyandu'      => $p->jadwal?->posyandu?->name ?? 'Posyandu Tubanan',
+                'sumber'        => str_contains($p->catatan ?? '', '[Laporan Mandiri Warga]') ? 'mandiri' : 'kader',
 
                 // BAGIAN 1: Penimbangan & Pengukuran
                 'penimbangan' => [
@@ -72,21 +72,21 @@ class RiwayatController extends Controller
 
                 // BAGIAN 2: Skrining TBC (4 Indikator)
                 'skrining_tbc' => [
-                    'detail'       => $tbc_detail, // array 4 boolean
-                    'jumlah_gejala' => $tbc_gejala,
-                    'hasil'        => $tbc_gejala >= 2 ? 'Suspek TBC' : ($tbc_gejala === 1 ? 'Perlu Pantau' : 'Negatif'),
-                    'dirujuk'      => (bool)$p->dirujuk,
+                    'detail'         => $tbc_detail,
+                    'jumlah_gejala'  => $tbc_gejala,
+                    'hasil'          => $tbc_gejala >= 2 ? 'Suspek TBC' : ($tbc_gejala === 1 ? 'Perlu Pantau' : 'Negatif'),
+                    'dirujuk'        => (bool)$p->dirujuk,
                     'alasan_rujukan' => $p->alasan_rujukan,
                 ],
 
                 // BAGIAN 3: Pelayanan Kesehatan
                 'pelayanan' => [
-                    'tensi'         => $p->tensi,
-                    'gula_darah'    => $p->gula_darah,
+                    'tensi'          => $p->tensi,
+                    'gula_darah'     => $p->gula_darah,
                     'usia_kandungan' => $p->usia_kandungan,
-                    'aks_score'     => $aks_score,
-                    'catatan'       => $p->catatan,
-                    'dirujuk'       => (bool)$p->dirujuk,
+                    'aks_score'      => $aks_score,
+                    'catatan'        => $p->catatan,
+                    'dirujuk'        => (bool)$p->dirujuk,
                     'alasan_rujukan' => $p->alasan_rujukan,
                 ],
             ];
@@ -105,15 +105,15 @@ class RiwayatController extends Controller
     public function laporMandiri(Request $request)
     {
         $request->validate([
-            'berat_badan'  => 'nullable|numeric|min:1|max:300',
-            'tinggi_badan' => 'nullable|numeric|min:20|max:250',
-            'lingkar_perut' => 'nullable|numeric',
-            'lila'         => 'nullable|numeric',
-            'tensi'        => 'nullable|string|max:20',
-            'gula_darah'   => 'nullable|numeric',
-            'skrining_tbc' => 'nullable|array|size:4',
-            'skrining_tbc.*' => 'boolean',
-            'catatan'      => 'nullable|string|max:1000',
+            'berat_badan'    => 'nullable|numeric|min:1|max:300',
+            'tinggi_badan'   => 'nullable|numeric|min:20|max:250',
+            'lingkar_perut'  => 'nullable|numeric',
+            'lila'           => 'nullable|numeric',
+            'tensi'          => 'nullable|string|max:20',
+            'gula_darah'     => 'nullable|numeric',
+            'skrining_tbc'   => 'nullable|array',
+            'skrining_tbc.*' => 'nullable',   // boleh null, true, atau false
+            'catatan'        => 'nullable|string|max:1000',
         ]);
 
         $user = $request->user();
@@ -126,17 +126,23 @@ class RiwayatController extends Controller
             $imt = round($request->berat_badan / ($tb_m * $tb_m), 1);
         }
 
-        // Tentukan status gizi berdasarkan IMT
+        // Tentukan status gizi berdasarkan IMT (simpan kategori bersih saja)
         $status_gizi = null;
         if ($imt !== null) {
-            if ($imt < 18.5)      $status_gizi = 'Kurus (IMT ' . $imt . ')';
-            elseif ($imt < 25)    $status_gizi = 'Normal (IMT ' . $imt . ')';
-            elseif ($imt < 27)    $status_gizi = 'Overweight (IMT ' . $imt . ')';
-            else                  $status_gizi = 'Obesitas (IMT ' . $imt . ')';
+            if ($imt < 18.5)   $status_gizi = 'Kurus';
+            elseif ($imt < 25) $status_gizi = 'Normal';
+            elseif ($imt < 27) $status_gizi = 'Overweight';
+            else               $status_gizi = 'Obesitas';
         }
 
         $catatanAkhir = $request->catatan ?? '';
         $catatanAkhir = trim('[Laporan Mandiri Warga] ' . $catatanAkhir);
+
+        // Konversi null ke false di array skrining_tbc
+        $skrining_tbc = array_map(
+            fn($v) => $v === true || $v === 1 || $v === '1',
+            $request->skrining_tbc ?? [false, false, false, false]
+        );
 
         $p = \App\Models\Pemeriksaan::create([
             'user_id'       => $user->id,
@@ -147,7 +153,7 @@ class RiwayatController extends Controller
             'lila'          => $request->lila,
             'tensi'         => $request->tensi,
             'gula_darah'    => $request->gula_darah,
-            'skrining_tbc'  => $request->skrining_tbc ?? [false, false, false, false],
+            'skrining_tbc'  => $skrining_tbc,
             'status_gizi'   => $status_gizi,
             'catatan'       => $catatanAkhir,
         ]);
