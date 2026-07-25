@@ -268,7 +268,7 @@ export default function LandingPage() {
                 <h3 className="font-bold text-slate-900 mb-1">Portal Bidan</h3>
                 <p className="text-xs text-slate-500">Pemeriksaan medis & rujukan</p>
               </a>
-              <a href="https://sipo-admin.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition-all group flex flex-col items-center text-center">
+              <a href="https://sipo-admin-sage.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition-all group flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Shield className="w-6 h-6" />
                 </div>

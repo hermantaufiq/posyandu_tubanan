@@ -92,7 +92,7 @@ export const authService = {
     // In development each portal runs on its own Vite port
     // In production these will be separate Vercel deployments
     const urls: Record<string, string> = {
-      admin:      'https://sipo-admin.vercel.app',
+      admin:      'https://sipo-admin-sage.vercel.app',
       nakes:      'https://sipo-nakes.vercel.app',
       kader:      'https://sipo-kader-sage.vercel.app',
       masyarakat: 'https://sipo-warga-brown.vercel.app',
