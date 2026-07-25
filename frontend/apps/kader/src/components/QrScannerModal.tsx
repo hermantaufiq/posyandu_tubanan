@@ -31,7 +31,7 @@ export default function QrScannerModal({
           }
           onScanSuccess(decodedText);
         },
-        (error) => {
+        (_error) => {
           // Ignore warnings (e.g. no QR found in current frame)
         }
       );
