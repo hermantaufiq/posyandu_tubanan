@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://smooth-falcon-19.loca.lt/api',
+  baseURL: '/api',
   headers: { "Bypass-Tunnel-Reminder": "true", 'Content-Type': 'application/json', Accept: 'application/json' },
 });
 
