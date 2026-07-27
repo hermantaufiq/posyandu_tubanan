@@ -195,16 +195,14 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
     },
   ],
 
-  // ─── BUKU 4: USIA DEWASA & LANSIA ──────────────────────────────────────────
-  "Usia Dewasa & Lansia (≥19 Tahun)": [
+  // ─── BUKU 4: USIA DEWASA ──────────────────────────────────────────
+  "Usia Dewasa (19-59 Tahun)": [
     {
       title: "KEHADIRAN SASARAN",
       color: "blue",
       fields: [
         { key: "SASARAN_DEWASA",   label: "Sasaran Usia Dewasa" },
-        { key: "SASARAN_LANSIA",   label: "Sasaran Usia Lansia (≥60)" },
         { key: "DATANG_DEWASA",    label: "Dewasa Datang" },
-        { key: "DATANG_LANSIA",    label: "Lansia Datang" },
         { key: "TIDAK_DATANG",     label: "Total Tidak Datang" },
       ]
     },
@@ -256,33 +254,13 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
       ]
     },
     {
-      title: "TINGKAT KETERGANTUNGAN LANSIA — AKS (SKILAS)",
-      color: "cyan",
-      fields: [
-        { key: "AKS_MANDIRI",       label: "Mandiri" },
-        { key: "AKS_BERGANTUNG",    label: "Bergantung Sebagian" },
-        { key: "AKS_TOTAL",         label: "Total / Tidur" },
-      ]
-    },
-    {
-      title: "SKRINING LANSIA SEDERHANA (SKILAS)",
-      color: "emerald",
-      fields: [
-        { key: "SKILAS_KOGNITIF_YA",    label: "Kognitif: Bermasalah (Ya)" },
-        { key: "SKILAS_GERAK_YA",       label: "Gerak: Bermasalah (Ya)" },
-        { key: "SKILAS_MALNUTRISI_YA",  label: "Malnutrisi: Ya" },
-        { key: "SKILAS_PENDENGARAN_YA", label: "Pendengaran: Bermasalah" },
-        { key: "SKILAS_PENGLIHATAN_YA", label: "Penglihatan: Bermasalah" },
-        { key: "SKILAS_DEPRESI_YA",     label: "Depresi: Ya" },
-      ]
-    },
-    {
-      title: "IMUNISASI & EDUKASI LANSIA",
+      title: "EDUKASI",
       color: "indigo",
       fields: [
-        { key: "IMUNISASI_COVID",   label: "Imunisasi COVID-19" },
-        { key: "EDUKASI",           label: "Mendapat Edukasi" },
-        { key: "DIRUJUK",           label: "Dirujuk ke Fasilitas" },
+        { key: "EDUKASI_CERDIK",    label: "Edukasi CERDIK (Gaya Hidup Sehat)" },
+        { key: "EDUKASI_KB",        label: "Edukasi Keluarga Berencana (KB)" },
+        { key: "EDUKASI_PTM",       label: "Edukasi Penyakit Tidak Menular (PTM)" },
+        { key: "DIRUJUK",           label: "Dirujuk ke Fasilitas Kesehatan" },
       ]
     },
   ],
