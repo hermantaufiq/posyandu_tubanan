@@ -88,7 +88,7 @@ class KaderController extends Controller
             'nik' => 'required|string|size:16',
             'name' => 'required|string|max:255',
             'jenis_layanan' => 'required|string',
-            'jadwal_id' => 'required|exists:jadwal_posyandus,id',
+            'jadwal_id' => 'required|exists:jadwals,id',
             'date_of_birth' => 'nullable|date',
             'address' => 'nullable|string',
         ]);
@@ -104,7 +104,7 @@ class KaderController extends Controller
                 'is_active' => true,
                 'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
-                'kategori_warga' => $request->jenis_layanan,
+                'kategori_warga' => 'sasaran',
             ]);
             $user->assignRole('masyarakat');
         }
@@ -127,12 +127,17 @@ class KaderController extends Controller
         }
 
         // Buat antrian baru
-        $lastAntrian = Antrian::where('jadwal_id', $request->jadwal_id)->max('nomor_antri') ?? 0;
+        $lastAntrianData = Antrian::where('jadwal_id', $request->jadwal_id)->orderBy('id', 'desc')->first();
+        $nextNumber = 1;
+        if ($lastAntrianData) {
+            $nextNumber = ((int) substr($lastAntrianData->nomor_antri, 2)) + 1;
+        }
+        $formattedNomor = 'A-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
         
         $antrian = Antrian::create([
             'jadwal_id' => $request->jadwal_id,
             'user_id' => $user->id,
-            'nomor_antri' => $lastAntrian + 1,
+            'nomor_antri' => $formattedNomor,
             'status' => 'hadir', // Walk-in otomatis hadir
             'jenis_layanan' => $request->jenis_layanan,
         ]);
