@@ -1,4 +1,7 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "https://smooth-falcon-19.loca.lt/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
