@@ -307,9 +307,71 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
       title: "TEKANAN DARAH",
       color: "violet",
       fields: [
-        { key: "TD_RENDAH",  label: "Rendah" },
+      { key: "TD_RENDAH",  label: "Rendah" },
         { key: "TD_NORMAL",  label: "Normal" },
         { key: "TD_TINGGI",  label: "Tinggi / Hipertensi" },
+      ]
+    },
+  ],
+
+  // ─── BUKU 5: LANSIA ──────────────────────────────────────────────────────────
+  "Lansia (≥60 Tahun)": [
+    {
+      title: "KEHADIRAN SASARAN",
+      color: "blue",
+      fields: [
+        { key: "SASARAN_LANSIA",   label: "Jumlah Sasaran Lansia" },
+        { key: "DATANG_LANSIA",    label: "Lansia Datang / Hadir" },
+        { key: "TIDAK_DATANG",     label: "Tidak Datang" },
+      ]
+    },
+    {
+      title: "IMT (Indeks Massa Tubuh)",
+      color: "amber",
+      fields: [
+        { key: "IMT_SK",   label: "Sangat Kurus (SK)" },
+        { key: "IMT_K",    label: "Kurus (K)" },
+        { key: "IMT_N",    label: "Normal (N)" },
+        { key: "IMT_G",    label: "Gemuk (G)" },
+        { key: "IMT_OB",   label: "Obesitas (OB)" },
+      ]
+    },
+    {
+      title: "TEKANAN DARAH",
+      color: "rose",
+      fields: [
+        { key: "TD_RENDAH",   label: "Rendah (R)" },
+        { key: "TD_NORMAL",   label: "Normal (N)" },
+        { key: "TD_TINGGI",   label: "Tinggi / Hipertensi (T)" },
+      ]
+    },
+    {
+      title: "GULA DARAH",
+      color: "violet",
+      fields: [
+        { key: "GD_RENDAH",   label: "Rendah (R)" },
+        { key: "GD_NORMAL",   label: "Normal (N)" },
+        { key: "GD_TINGGI",   label: "Tinggi / DM (T)" },
+      ]
+    },
+    {
+      title: "SKRINING PUMA / PPOK (Paru)",
+      color: "indigo",
+      fields: [
+        { key: "PUMA_KAT_A",   label: "Kategori A (Normal)" },
+        { key: "PUMA_KAT_B",   label: "Kategori B" },
+        { key: "PUMA_KAT_C",   label: "Kategori C" },
+      ]
+    },
+    {
+      title: "EDUKASI LANSIA",
+      color: "cyan",
+      fields: [
+        { key: "EDUKASI_GERMAS",   label: "Edukasi GERMAS (Aktivitas Fisik)" },
+        { key: "EDUKASI_GIZI",     label: "Edukasi Gizi Seimbang Lansia" },
+        { key: "EDUKASI_PTM",      label: "Edukasi Penyakit Tidak Menular (PTM)" },
+        { key: "EDUKASI_JATUH",    label: "Edukasi Pencegahan Jatuh" },
+        { key: "DIRUJUK",          label: "Dirujuk ke Fasilitas Kesehatan" },
       ]
     },
   ],
