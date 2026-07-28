@@ -423,7 +423,7 @@ export default function LaporanPwsPage() {
       });
 
       setDone(true);
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate("/"), 500);
     } catch (err: any) {
       alert("Gagal menyimpan: " + (err.response?.data?.message || err.message));
     } finally {
