@@ -47,7 +47,7 @@ export default function DashboardLayout() {
       if (userData) {
         setUser(JSON.parse(userData)); // Set sementara dari cache agar UI tidak blank
       } else {
-        window.location.href = 'http://localhost:5173/login';
+        window.location.href = 'https://sipo-warga-brown.vercel.app/login';
         return;
       }
     }
@@ -65,7 +65,7 @@ export default function DashboardLayout() {
             // Token mungkin sudah expired — redirect ke login
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_user');
-            window.location.href = 'http://localhost:5173/login';
+            window.location.href = 'https://sipo-warga-brown.vercel.app/login';
           });
           
         api.get('/masyarakat/pengumuman')
@@ -78,7 +78,7 @@ export default function DashboardLayout() {
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
-    window.location.href = 'http://localhost:5173/login';
+    window.location.href = 'https://sipo-warga-brown.vercel.app/login';
   };
 
   const handleTanyaBidan = () => {
