@@ -242,7 +242,7 @@ export default function LandingPage() {
               <p className="text-slate-500 mt-2 text-sm">Pilih portal sesuai dengan peran Anda di Posyandu Desa Tubanan</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              <a href="https://masyarakat-murex.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col items-center text-center">
+              <a href="https://masyarakat-9f8qkckqp-hermans-projects-13e372e0.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Users className="w-6 h-6" />
                 </div>

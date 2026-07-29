@@ -3,7 +3,7 @@ import LandingPage from './pages/LandingPage';
 
 // Redirect /login dan semua route lain ke portal masyarakat yang sebenarnya
 function RedirectToMasyarakat() {
-  window.location.href = 'https://masyarakat-murex.vercel.app';
+  window.location.href = 'https://masyarakat-9f8qkckqp-hermans-projects-13e372e0.vercel.app';
   return null;
 }
 
