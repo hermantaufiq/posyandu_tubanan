@@ -313,89 +313,56 @@ export default function HomePage() {
           </motion.div>
 
           {/* ══════════════════════════════════
-              KMS — HANYA untuk SASARAN
+              KMS — TERSEDIA UNTUK SEMUA (Balita & Dewasa)
              ══════════════════════════════════ */}
-          {isSasaran ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm flex flex-col"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-emerald-500" />
-                  KMS Digital (Balita)
-                </h2>
-                <Link to="/kms" className="text-sm font-medium text-blue-600 hover:text-blue-700">Detail KMS</Link>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm flex flex-col"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-emerald-500" />
+                KMS Digital (Grafik Kesehatan)
+              </h2>
+              <Link to="/kms" className="text-sm font-medium text-blue-600 hover:text-blue-700">Detail KMS</Link>
+            </div>
+
+            <div className="bg-emerald-50/50 rounded-xl border border-emerald-100/50 p-5 flex-1 relative overflow-hidden">
+              <div className="absolute right-0 bottom-0 opacity-10">
+                <FileText className="w-32 h-32 text-emerald-600 translate-x-8 translate-y-8" />
               </div>
 
-              <div className="bg-emerald-50/50 rounded-xl border border-emerald-100/50 p-5 flex-1 relative overflow-hidden">
-                <div className="absolute right-0 bottom-0 opacity-10">
-                  <FileText className="w-32 h-32 text-emerald-600 translate-x-8 translate-y-8" />
-                </div>
-
-                {dashboardData?.balita ? (
-                  <>
-                    <h3 className="font-semibold text-slate-800 mb-4">{dashboardData.balita.nama} ({dashboardData.balita.jenis_kelamin})</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
-                        <p className="text-xs text-slate-500 mb-1">Berat Badan</p>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-xl font-bold text-slate-800">{dashboardData.pemeriksaan_terakhir?.berat_badan || '-'}</span>
-                          <span className="text-sm font-medium text-slate-500">kg</span>
-                        </div>
-                        <p className="text-xs text-emerald-600 font-medium mt-1">{dashboardData.pemeriksaan_terakhir?.status_gizi || '-'}</p>
+              {dashboardData?.balita ? (
+                <>
+                  <h3 className="font-semibold text-slate-800 mb-4">{dashboardData.balita.nama} ({dashboardData.balita.jenis_kelamin})</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                      <p className="text-xs text-slate-500 mb-1">Berat Badan</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold text-slate-800">{dashboardData.pemeriksaan_terakhir?.berat_badan || '-'}</span>
+                        <span className="text-sm font-medium text-slate-500">kg</span>
                       </div>
-                      <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
-                        <p className="text-xs text-slate-500 mb-1">Tinggi Badan</p>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-xl font-bold text-slate-800">{dashboardData.pemeriksaan_terakhir?.tinggi_badan || '-'}</span>
-                          <span className="text-sm font-medium text-slate-500">cm</span>
-                        </div>
+                      <p className="text-xs text-emerald-600 font-medium mt-1">{dashboardData.pemeriksaan_terakhir?.status_gizi || '-'}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                      <p className="text-xs text-slate-500 mb-1">Tinggi Badan</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold text-slate-800">{dashboardData.pemeriksaan_terakhir?.tinggi_badan || '-'}</span>
+                        <span className="text-sm font-medium text-slate-500">cm</span>
                       </div>
                     </div>
-                    <Link to="/kms" className="mt-4 w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 rounded-lg transition-colors relative z-10">
-                      Lihat Grafik Pertumbuhan <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </>
-                ) : (
-                  <p className="text-sm text-slate-500 relative z-10">Data KMS Balita tidak ditemukan.</p>
-                )}
-              </div>
-            </motion.div>
-          ) : (
-            /* KMS LOCKED untuk PENGUNJUNG */
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm flex flex-col"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-slate-400 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-slate-300" />
-                  KMS Digital (Balita)
-                </h2>
-                <span className="text-xs bg-slate-100 text-slate-400 px-2 py-1 rounded-full font-medium">Khusus Warga</span>
-              </div>
-
-              <div className="bg-slate-50 rounded-xl border border-dashed border-slate-200 p-8 flex-1 flex flex-col items-center justify-center text-center gap-3">
-                <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center">
-                  <Lock className="w-8 h-8 text-slate-300" />
-                </div>
-                <div>
-                  <p className="font-bold text-slate-500 text-sm">Fitur Eksklusif Warga Tubanan</p>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Grafik KMS & riwayat pemeriksaan hanya tersedia bagi warga yang terdaftar sebagai <strong>Sasaran</strong> Posyandu Desa Tubanan.
-                  </p>
-                </div>
-                <div className="bg-indigo-50 border border-dashed border-indigo-200 rounded-xl px-4 py-2.5 text-xs text-indigo-700 mt-2">
-                  Sudah menetap di Tubanan? Hubungi petugas desa untuk mengubah status Anda.
-                </div>
-              </div>
-            </motion.div>
-          )}
+                  </div>
+                  <Link to="/kms" className="mt-4 w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 rounded-lg transition-colors relative z-10">
+                    Lihat Grafik Pertumbuhan <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </>
+              ) : (
+                <p className="text-sm text-slate-500 relative z-10">Data KMS tidak ditemukan.</p>
+              )}
+            </div>
+          </motion.div>
         </div>
       )}
     </div>
