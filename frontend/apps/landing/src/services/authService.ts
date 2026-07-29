@@ -95,7 +95,7 @@ export const authService = {
       admin:      'https://sipo-admin-mu.vercel.app',
       nakes:      'https://sipo-nakes.vercel.app',
       kader:      'https://sipo-kader-sage.vercel.app',
-      masyarakat: 'https://sipo-warga-brown.vercel.app',
+      masyarakat: 'https://sipo-masyarakat-tubanan.vercel.app',
     };
     const baseUrl = urls[role] || '/';
     
