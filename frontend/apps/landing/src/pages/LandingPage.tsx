@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
 const spmServices = [
-  { icon: Heart, title: 'Ibu Hamil', desc: 'Pelayanan Antenatal Care (ANC) berkualitas untuk ibu hamil', color: 'from-rose-500 to-pink-600' },
-  { icon: Activity, title: 'Ibu Bersalin', desc: 'Persalinan aman di fasilitas kesehatan yang kompeten', color: 'from-orange-500 to-amber-600' },
-  { icon: Users, title: 'Bayi Baru Lahir', desc: 'Pemantauan tumbuh kembang bayi sejak hari pertama', color: 'from-yellow-500 to-lime-600' },
-  { icon: Shield, title: 'Balita', desc: 'Posyandu aktif: penimbangan, imunisasi, dan vitamin', color: 'from-emerald-500 to-teal-600' },
-  { icon: Heart, title: 'Usia Produktif', desc: 'Deteksi dini penyakit tidak menular pada usia 15–59', color: 'from-blue-500 to-cyan-600' },
-  { icon: Activity, title: 'Usia Lanjut', desc: 'Pelayanan kesehatan dan sosial untuk lansia', color: 'from-violet-500 to-purple-600' },
+  { icon: Users, title: 'Bidang Pendidikan', desc: 'Layanan pendidikan anak usia dini dan pendidikan dasar', color: 'from-blue-500 to-indigo-600' },
+  { icon: Heart, title: 'Bidang Kesehatan', desc: 'Pemenuhan layanan kesehatan dasar dan posyandu', color: 'from-rose-500 to-pink-600' },
+  { icon: MapPin, title: 'Bidang Pekerjaan Umum', desc: 'Infrastruktur dasar dan penataan ruang publik', color: 'from-orange-500 to-amber-600' },
+  { icon: Shield, title: 'Bidang Perumahan Rakyat', desc: 'Kawasan permukiman yang layak dan sehat', color: 'from-emerald-500 to-teal-600' },
+  { icon: Activity, title: 'Bidang Trantibumlinmas', desc: 'Ketenteraman, ketertiban umum, dan pelindungan masyarakat', color: 'from-slate-500 to-gray-600' },
+  { icon: Users, title: 'Bidang Sosial', desc: 'Bantuan sosial dan penanganan masalah kesejahteraan', color: 'from-violet-500 to-purple-600' },
 ];
 
 const stats = [
@@ -56,11 +56,6 @@ export default function LandingPage() {
             <a href="#kontak" className="hover:text-primary transition-colors">Kontak</a>
           </nav>
 
-          <Link to="/login">
-            <Button className="rounded-full shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold px-5 text-sm">
-              Portal Digital
-            </Button>
-          </Link>
         </div>
       </header>
 
@@ -107,12 +102,12 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row items-center gap-4"
           >
-            <Link to="/login">
+            <a href="#portal">
               <Button size="lg" className="w-full sm:w-auto rounded-full shadow-xl shadow-blue-600/25 px-8 gap-2 group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500">
                 Akses Portal Digital
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
-            </Link>
+            </a>
             <a href="#layanan">
               <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-8 bg-white/60 backdrop-blur-sm border-slate-200 hover:bg-white hover:border-slate-300 text-slate-700">
                 Lihat Layanan SPM
@@ -240,14 +235,14 @@ export default function LandingPage() {
         </section>
 
         {/* ─── Quick Access Portals ─── */}
-        <section className="bg-slate-50 py-12 border-t border-slate-200/60 relative z-20">
+        <section id="portal" className="bg-slate-50 py-12 border-t border-slate-200/60 relative z-20">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="text-center mb-10">
               <h2 className="text-2xl font-extrabold text-slate-900">Akses Portal Cepat</h2>
               <p className="text-slate-500 mt-2 text-sm">Pilih portal sesuai dengan peran Anda di Posyandu Desa Tubanan</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              <a href="https://sipo-warga-brown.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col items-center text-center">
+              <a href="https://masyarakat-murex.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Users className="w-6 h-6" />
                 </div>
