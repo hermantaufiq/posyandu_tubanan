@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Calendar as CalendarIcon, MapPin, Clock, ArrowRight, Activity,
-  FileText, QrCode, ShieldCheck, ChevronRight, Globe, Home, Lock, Info
+  FileText, QrCode, ShieldCheck, ChevronRight, Globe, Home, Info
 } from 'lucide-react';
 import api from '../lib/api';
 import { Link } from 'react-router-dom';
