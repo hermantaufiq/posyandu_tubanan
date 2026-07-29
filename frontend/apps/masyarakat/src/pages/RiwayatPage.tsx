@@ -35,6 +35,17 @@ function BadgeIMT({ kategori }: { kategori: string | null }) {
   return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${map[kategori] ?? "bg-slate-100 text-slate-600"}`}>{kategori}</span>;
 }
 
+function BadgeGulaDarah({ val }: { val: number | string | null }) {
+  if (!val) return null;
+  const num = parseFloat(val.toString());
+  if (isNaN(num)) return null;
+  
+  if (num < 70) return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Rendah</span>;
+  if (num <= 140) return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Normal</span>;
+  if (num < 200) return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Waspada</span>;
+  return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700">Tinggi</span>;
+}
+
 function CellVal({ val, unit }: { val: any; unit?: string }) {
   if (val === null || val === undefined || val === "") return <span className="text-slate-300">-</span>;
   return <span className="font-semibold text-slate-700">{val}{unit ? <span className="text-slate-400 font-normal text-[10px] ml-0.5">{unit}</span> : ""}</span>;
@@ -176,7 +187,14 @@ function TabPelayanan({ data }: { data: any[] }) {
               <tr key={row.id} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/60"}>
                 <td className="px-3 py-2.5 whitespace-nowrap text-slate-600 font-medium">{row.tanggal_label}</td>
                 <td className="px-3 py-2.5 text-center"><CellVal val={p?.tensi} /></td>
-                <td className="px-3 py-2.5 text-center"><CellVal val={p?.gula_darah} unit="mg/dL" /></td>
+                <td className="px-3 py-2.5 text-center">
+                  {p?.gula_darah ? (
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="font-semibold text-slate-700">{p.gula_darah}<span className="text-slate-400 font-normal text-[10px] ml-0.5">mg/dL</span></span>
+                      <BadgeGulaDarah val={p.gula_darah} />
+                    </div>
+                  ) : <span className="text-slate-300">-</span>}
+                </td>
                 <td className="px-3 py-2.5 text-center"><CellVal val={p?.usia_kandungan} unit="mgg" /></td>
                 <td className="px-3 py-2.5 text-center">
                   {p?.aks_score !== null && p?.aks_score !== undefined ? (
@@ -326,7 +344,10 @@ function TabMandiri({ onSuccess }: { onSuccess: () => void }) {
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Gula Darah (mg/dL) <span className="text-slate-400 font-normal">opsional</span></label>
+              <div className="flex justify-between items-end mb-1">
+                <label className="block text-xs font-semibold text-slate-600">Gula Darah (mg/dL) <span className="text-slate-400 font-normal">opsional</span></label>
+                {form.gula_darah && <BadgeGulaDarah val={form.gula_darah} />}
+              </div>
               <input type="number" placeholder="cth: 95" value={form.gula_darah}
                 onChange={e => setForm({ ...form, gula_darah: e.target.value })}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all" />
@@ -585,17 +606,35 @@ export default function RiwayatPage() {
                                 </div>
                                 <div className="bg-emerald-50/60 rounded-xl p-3 border border-emerald-100 space-y-1.5">
                                   <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1"><Stethoscope className="w-3 h-3" />Pelayanan Kesehatan</p>
-                                  {[
-                                    { label: "Tensi", val: row.pelayanan?.tensi },
-                                    { label: "Gula Darah", val: row.pelayanan?.gula_darah, unit: "mg/dL" },
-                                    { label: "Uk. Kandungan", val: row.pelayanan?.usia_kandungan, unit: "mgg" },
-                                    { label: "Skor AKS", val: row.pelayanan?.aks_score },
-                                  ].filter(r => r.val !== null && r.val !== undefined).map(r => (
-                                    <div key={r.label} className="flex justify-between text-xs">
-                                      <span className="text-slate-500">{r.label}</span>
-                                      <span className="font-semibold text-slate-700">{r.val}{r.unit ? ` ${r.unit}` : ""}</span>
-                                    </div>
-                                  ))}
+                                  <div className="space-y-1 mt-2">
+                                    {row.pelayanan?.tensi && (
+                                      <div className="flex justify-between text-xs">
+                                        <span className="text-slate-500">Tensi</span>
+                                        <span className="font-semibold text-slate-700">{row.pelayanan.tensi}</span>
+                                      </div>
+                                    )}
+                                    {row.pelayanan?.gula_darah && (
+                                      <div className="flex justify-between text-xs items-center">
+                                        <span className="text-slate-500">Gula Darah</span>
+                                        <div className="flex items-center gap-2">
+                                          <span className="font-semibold text-slate-700">{row.pelayanan.gula_darah} mg/dL</span>
+                                          <BadgeGulaDarah val={row.pelayanan.gula_darah} />
+                                        </div>
+                                      </div>
+                                    )}
+                                    {row.pelayanan?.usia_kandungan && (
+                                      <div className="flex justify-between text-xs">
+                                        <span className="text-slate-500">Uk. Kandungan</span>
+                                        <span className="font-semibold text-slate-700">{row.pelayanan.usia_kandungan} mgg</span>
+                                      </div>
+                                    )}
+                                    {row.pelayanan?.aks_score !== null && row.pelayanan?.aks_score !== undefined && (
+                                      <div className="flex justify-between text-xs">
+                                        <span className="text-slate-500">Skor AKS</span>
+                                        <span className="font-semibold text-slate-700">{row.pelayanan.aks_score}</span>
+                                      </div>
+                                    )}
+                                  </div>
                                   {row.pelayanan?.catatan && (
                                     <div className="pt-1 border-t border-emerald-100">
                                       <p className="text-[10px] text-slate-500 font-medium">Catatan Bidan</p>
