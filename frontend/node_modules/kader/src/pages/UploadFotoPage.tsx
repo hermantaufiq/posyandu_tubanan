@@ -16,7 +16,7 @@ export default function UploadFotoPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [form, setForm] = useState({
-    kategori: "Balita",
+    kategori: "Langkah 1",
     bulan: new Date().toLocaleString('id-ID', { month: 'long' }),
     tahun: new Date().getFullYear(),
     catatan: "",
@@ -100,7 +100,7 @@ export default function UploadFotoPage() {
       setDone(true);
       setTimeout(() => {
         navigate("/");
-      }, 2000);
+      }, 500);
     } catch (err: any) {
       alert("Gagal mengunggah laporan: " + (err.response?.data?.message || err.message));
     } finally {
@@ -138,11 +138,11 @@ export default function UploadFotoPage() {
                   value={form.kategori}
                   onChange={(e) => setForm({...form, kategori: e.target.value})}
                 >
-                  <option value="Balita">Balita & Apras</option>
-                  <option value="Lansia">Lansia</option>
-                  <option value="Usia Produktif">Usia Produktif</option>
-                  <option value="Anak Sekolah & Remaja">Anak Sekolah & Remaja</option>
-                  <option value="Bumil & Busui">Bumil & Busui</option>
+                  <option value="Langkah 1">Langkah 1 (Pendaftaran)</option>
+                  <option value="Langkah 2">Langkah 2 (Penimbangan & Pengukuran)</option>
+                  <option value="Langkah 3">Langkah 3 (Pencatatan)</option>
+                  <option value="Langkah 4">Langkah 4 (Pelayanan Kesehatan)</option>
+                  <option value="Langkah 5">Langkah 5 (Penyuluhan & Edukasi)</option>
                 </select>
               </div>
 
