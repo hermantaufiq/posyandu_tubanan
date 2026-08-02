@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Shield, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import api from '../lib/api';
 
@@ -7,6 +8,7 @@ export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ export default function LoginPage() {
       }
       localStorage.setItem('admin_auth_token', token);
       localStorage.setItem('admin_auth_user', JSON.stringify(user));
-      window.location.href = '/';
+      navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Login gagal. Periksa kembali kredensial Anda.');
     } finally {

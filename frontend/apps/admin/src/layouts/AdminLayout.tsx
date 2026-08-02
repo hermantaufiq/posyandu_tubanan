@@ -6,6 +6,7 @@ import {
   Sun, Moon
 } from 'lucide-react';
 import { useTheme } from '../components/ThemeContext';
+import api from '../lib/api';
 
 const NAV = [
   { to: '/',            label: 'Dashboard',   icon: LayoutDashboard },
@@ -18,6 +19,17 @@ const NAV = [
   { to: '/pengaturan',  label: 'Pengaturan',  icon: Settings },
 ];
 
+const PREFETCH_MAP: Record<string, string[]> = {
+  '/': ['/admin/dashboard'],
+  '/pengumuman': ['/admin/pengumuman'],
+  '/jadwal': ['/admin/jadwal', '/admin/posyandus'],
+  '/users': ['/admin/users'],
+  '/laporan-kader': ['/admin/laporan-kader'],
+  '/laporan': ['/admin/laporan/antrian', '/admin/laporan/pemeriksaan'],
+  '/posyandu': ['/admin/posyandu'],
+  '/pengaturan': ['/admin/invite-codes'],
+};
+
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -28,6 +40,15 @@ export default function AdminLayout() {
     localStorage.removeItem('admin_auth_token');
     localStorage.removeItem('admin_auth_user');
     window.location.href = '/login';
+  };
+
+  const handlePrefetch = (path: string) => {
+    const endpoints = PREFETCH_MAP[path];
+    if (endpoints) {
+      endpoints.forEach(ep => {
+        api.get(ep).catch(() => {});
+      });
+    }
   };
 
   return (
@@ -59,6 +80,8 @@ export default function AdminLayout() {
             const active = location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to + '/'));
             return (
               <Link key={item.to} to={item.to}
+                onMouseEnter={() => handlePrefetch(item.to)}
+                onFocus={() => handlePrefetch(item.to)}
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   active
