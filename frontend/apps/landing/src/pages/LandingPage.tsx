@@ -40,9 +40,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/70 backdrop-blur-md">
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-600/30">
-              +
-            </div>
+            <img src="/logo.svg" alt="SIPO Logo" className="w-8 h-8 object-contain" />
             <div>
               <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">SIPO-Terpadu Tubanan</span>
               <span className="hidden sm:block text-xs text-slate-400 leading-none">Desa Tubanan, Kec. Kembang</span>
@@ -335,11 +333,11 @@ export default function LandingPage() {
         {/* ─── Footer ─── */}
         <footer id="kontak" className="bg-slate-900 text-slate-400 py-12">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              <div>
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">+</div>
-                  <span className="text-white font-bold">SIPO-Terpadu Tubanan</span>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 border-b border-slate-800 pb-12">
+              <div className="md:col-span-1">
+                <div className="flex items-center gap-2 mb-4">
+                  <img src="/logo.svg" alt="SIPO Logo" className="w-8 h-8 object-contain" />
+                  <span className="font-bold text-white text-lg">SIPO-Terpadu Tubanan</span>
                 </div>
                 <p className="text-sm leading-relaxed">Platform digital pelayanan Posyandu Desa Tubanan berbasis 6 Standar Pelayanan Minimal (SPM).</p>
               </div>
