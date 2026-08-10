@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, CalendarDays, Users, FileBarChart, MapPin,
-  LogOut, Menu, X, ChevronRight, Shield, Settings, Megaphone,
+  LogOut, Menu, X, ChevronRight, Settings, Megaphone,
   Sun, Moon
 } from 'lucide-react';
 import { useTheme } from '../components/ThemeContext';

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Calendar, History, LogOut, Bell, Menu, X, BookOpen, Ticket, Activity, User } from 'lucide-react';
+import { LayoutDashboard, FileText, Calendar, History, LogOut, Bell, Menu, X, BookOpen, Ticket, User } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'framer-motion';
