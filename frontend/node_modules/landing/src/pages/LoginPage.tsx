@@ -18,7 +18,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const roleCards = [
   { icon: Users, label: 'Masyarakat', color: 'from-emerald-500 to-teal-600', desc: 'Pantau kesehatan keluarga' },
-  { icon: Heart, label: 'Tenaga Kesehatan', color: 'from-rose-500 to-pink-600', desc: 'Kelola layanan SPM' },
+
   { icon: ShieldCheck, label: 'Kader Posyandu', color: 'from-amber-500 to-orange-600', desc: 'Catat & rekap data' },
   { icon: Activity, label: 'Administrator', color: 'from-violet-500 to-purple-600', desc: 'Pantau semua portal' },
 ];
@@ -251,7 +251,6 @@ export default function LoginPage() {
               <p className="text-blue-300 text-xs font-semibold mb-1.5">🔑 Akun Demo</p>
               <div className="space-y-0.5 text-slate-400 text-xs font-mono">
                 <p>Admin: <span className="text-slate-300">admin@posyandu-tubanan.id</span></p>
-                <p>Nakes: <span className="text-slate-300">bidan@posyandu-tubanan.id</span></p>
                 <p>Kader: <span className="text-slate-300">kader@posyandu-tubanan.id</span></p>
                 <p>Warga: <span className="text-slate-300">warga@posyandu-tubanan.id</span></p>
                 <p className="pt-1">Password: <span className="text-slate-300">password123</span></p>
