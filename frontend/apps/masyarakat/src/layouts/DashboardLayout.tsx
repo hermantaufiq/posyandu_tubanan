@@ -111,9 +111,7 @@ export default function DashboardLayout() {
       >
         <div className="h-16 flex items-center px-6 border-b border-slate-100 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <Activity className="w-5 h-5 text-white" />
-            </div>
+            <img src="/logo.svg" alt="SIPO Logo" className="w-8 h-8 object-contain" />
             <span className="font-bold text-lg text-slate-800 tracking-tight">Portal Warga</span>
           </div>
           <button 

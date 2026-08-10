@@ -36,8 +36,8 @@ export default function LoginPage() {
             <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white translate-y-1/2 -translate-x-1/2" />
           </div>
           <div className="relative z-10">
-            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
-              <HeartHandshake className="w-8 h-8 text-white" />
+            <div className="w-14 h-14 flex items-center justify-center mb-6">
+              <img src="/logo.svg" alt="SIPO Logo" className="w-14 h-14 object-contain" />
             </div>
             <h1 className="text-3xl font-black mb-2">SIPO-Terpadu Tubanan</h1>
             <p className="text-emerald-100 text-sm leading-relaxed">Meja 1, 2 & 3 — Pendaftaran, Pengukuran & Pencatatan KMS</p>

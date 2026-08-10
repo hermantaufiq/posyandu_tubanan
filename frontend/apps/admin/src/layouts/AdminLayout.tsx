@@ -62,9 +62,7 @@ export default function AdminLayout() {
       <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Logo */}
         <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-200 dark:border-slate-800">
-          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <Shield className="w-5 h-5 text-white" />
-          </div>
+          <img src="/logo.svg" alt="SIPO Logo" className="w-10 h-10 rounded-xl object-contain" />
           <div>
             <p className="font-bold text-sm text-slate-800 dark:text-white tracking-tight">SIPO-Terpadu Tubanan</p>
             <p className="text-[10px] text-slate-500 font-medium">Posyandu Tubanan</p>
@@ -109,6 +107,26 @@ export default function AdminLayout() {
             <button onClick={logout} className="text-slate-500 hover:text-rose-400 transition-colors" title="Keluar">
               <LogOut className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+
+        {/* Sponsor Bar */}
+        <div className="px-3 pb-3 border-t border-slate-200 dark:border-slate-800 pt-3">
+          <p className="text-[9px] font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-widest text-center mb-2">Program KKN UNISNU Jepara</p>
+          <div className="flex items-center justify-center gap-3">
+            <div className="text-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mx-auto shadow-sm">
+                <span className="text-white text-[8px] font-black">KKN</span>
+              </div>
+              <p className="text-[8px] text-slate-400 mt-0.5 leading-tight">Desa<br/>Tubanan</p>
+            </div>
+            <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
+            <div className="text-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-700 to-emerald-800 flex items-center justify-center mx-auto shadow-sm">
+                <span className="text-white text-[7px] font-black leading-tight text-center">UNI<br/>SNU</span>
+              </div>
+              <p className="text-[8px] text-slate-400 mt-0.5 leading-tight">UNISNU<br/>Jepara</p>
+            </div>
           </div>
         </div>
       </aside>
