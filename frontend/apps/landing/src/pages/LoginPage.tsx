@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import {
-  Eye, EyeOff, LogIn, Loader2, ShieldCheck, Heart,
+  Eye, EyeOff, LogIn, Loader2, ShieldCheck,
   Users, Activity, UserPlus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
