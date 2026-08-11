@@ -37,7 +37,7 @@ export default function LoginPage() {
           </div>
           <div className="relative z-10">
             <div className="w-14 h-14 flex items-center justify-center mb-6">
-              <img src="/logo.svg" alt="SIPO Logo" className="w-14 h-14 object-contain" />
+              <img src="/logo.png" alt="SIPO Logo" className="w-14 h-14 rounded-full bg-white object-contain" />
             </div>
             <h1 className="text-3xl font-black mb-2">SIPO-Terpadu Tubanan</h1>
             <p className="text-emerald-100 text-sm leading-relaxed">Meja 1, 2 & 3 — Pendaftaran, Pengukuran & Pencatatan KMS</p>

@@ -70,7 +70,7 @@ export default function DashboardKader() {
       {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 sticky top-0 z-50 flex items-center justify-between shadow-sm dark:shadow-none">
         <div className="flex items-center gap-4">
-          <img src="/logo.svg" alt="SIPO Logo" className="w-12 h-12 object-contain" />
+          <img src="/logo.png" alt="SIPO Logo" className="w-12 h-12 rounded-full bg-white object-contain" />
           <div>
             <h1 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">SIPO-Terpadu Tubanan</h1>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">

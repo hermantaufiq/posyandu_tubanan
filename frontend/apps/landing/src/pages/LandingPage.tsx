@@ -40,7 +40,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/70 backdrop-blur-md">
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.svg" alt="SIPO Logo" className="w-8 h-8 object-contain" />
+            <img src="/logo.png" alt="SIPO Logo" className="w-8 h-8 rounded-full bg-white object-contain" />
             <div>
               <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">SIPO-Terpadu Tubanan</span>
               <span className="hidden sm:block text-xs text-slate-400 leading-none">Desa Tubanan, Kec. Kembang</span>
@@ -336,7 +336,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 border-b border-slate-800 pb-12">
               <div className="md:col-span-1">
                 <div className="flex items-center gap-2 mb-4">
-                  <img src="/logo.svg" alt="SIPO Logo" className="w-8 h-8 object-contain" />
+                  <img src="/logo.png" alt="SIPO Logo" className="w-8 h-8 rounded-full bg-white object-contain" />
                   <span className="font-bold text-white text-lg">SIPO-Terpadu Tubanan</span>
                 </div>
                 <p className="text-sm leading-relaxed">Platform digital pelayanan Posyandu Desa Tubanan berbasis 6 Standar Pelayanan Minimal (SPM).</p>
