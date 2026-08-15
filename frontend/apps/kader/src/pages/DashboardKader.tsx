@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogOut, LayoutDashboard, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRight, Sun, Moon, Download, Printer, Users } from "lucide-react";
+import { LogOut, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRight, Sun, Moon, Download, Printer, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import { useTheme } from "../components/ThemeContext";

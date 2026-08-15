@@ -28,8 +28,15 @@ class RegisterKaderController extends Controller
             'invite_code'   => 'required|string',
         ]);
 
-        // Verifikasi kode undangan
+        // Verifikasi kode undangan dengan membaca langsung dari .env untuk menghindari cache
+        $envPath = base_path('.env');
         $validCode = env('KADER_INVITE_CODE', 'KADER2025');
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+            if (preg_match('/^KADER_INVITE_CODE=(.*)$/m', $envContent, $matches)) {
+                $validCode = trim($matches[1]);
+            }
+        }
         if (strtoupper($request->invite_code) !== $validCode) {
             return response()->json([
                 'message' => 'Kode undangan tidak valid. Hubungi Kepala Posyandu Anda.',
