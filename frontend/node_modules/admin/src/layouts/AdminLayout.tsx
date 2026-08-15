@@ -62,7 +62,7 @@ export default function AdminLayout() {
       <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Logo */}
         <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-200 dark:border-slate-800">
-          <img src="/logo.svg" alt="SIPO Logo" className="w-10 h-10 object-contain" />
+          <img src="/logo.png" alt="SIPO Logo" className="w-10 h-10 object-contain" />
           <div>
             <p className="font-bold text-sm text-slate-800 dark:text-white tracking-tight">SIPO-Terpadu Tubanan</p>
             <p className="text-[10px] text-slate-500 font-medium">Posyandu Tubanan</p>
