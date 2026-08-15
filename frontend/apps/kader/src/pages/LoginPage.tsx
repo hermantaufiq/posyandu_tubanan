@@ -32,12 +32,12 @@ export default function LoginPage() {
         {/* Left Panel */}
         <div className="md:w-5/12 bg-gradient-to-br from-emerald-600 to-teal-700 p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 translate-y-1/2 -translate-x-1/2" />
           </div>
           <div className="relative z-10">
             <div className="w-14 h-14 flex items-center justify-center mb-6">
-              <img src="/logo.png" alt="SIPO Logo" className="w-14 h-14 rounded-full bg-white object-contain" />
+              <img src="/logo.svg" alt="SIPO Logo" className="w-14 h-14 object-contain" />
             </div>
             <h1 className="text-3xl font-black mb-2">SIPO-Terpadu Tubanan</h1>
             <p className="text-emerald-100 text-sm leading-relaxed">Meja 1, 2 & 3 — Pendaftaran, Pengukuran & Pencatatan KMS</p>

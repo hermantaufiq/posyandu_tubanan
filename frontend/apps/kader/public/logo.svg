@@ -1,24 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- Outer circle border -->
-  <circle cx="100" cy="100" r="96" fill="white" stroke="#6B3FA0" stroke-width="3"/>
-  
-  <!-- Blue figure (left) -->
-  <circle cx="52" cy="52" r="10" fill="#4A80E8"/>
-  <!-- Blue U-shape body -->
-  <path d="M38 72 Q38 100 52 100 Q66 100 66 72" fill="none" stroke="#4A80E8" stroke-width="12" stroke-linecap="round"/>
+  <!-- Black background circle -->
+  <circle cx="100" cy="100" r="98" fill="#000000"/>
+  <!-- Purple border ring -->
+  <circle cx="100" cy="100" r="96" fill="none" stroke="#7B2F8E" stroke-width="2.5"/>
 
-  <!-- Orange figure (top center) -->
-  <circle cx="100" cy="45" r="10" fill="#F5853F"/>
-  <!-- Orange V-shape body -->
-  <path d="M82 65 L100 88 L118 65" fill="none" stroke="#F5853F" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Blue figure (left) - head + U-shape arms -->
+  <circle cx="50" cy="52" r="9" fill="#4472C4"/>
+  <path d="M32 75 Q22 95 30 115 Q36 130 50 128 Q64 126 68 112 Q72 96 62 82 Q58 76 52 74 Q46 72 40 74 Q34 74 32 75Z" fill="#4472C4"/>
 
-  <!-- Pink figure (right) -->
-  <circle cx="148" cy="52" r="10" fill="#EE4CA1"/>
-  <!-- Pink U-shape body (mirrored) -->
-  <path d="M162 72 Q162 100 148 100 Q134 100 134 72" fill="none" stroke="#EE4CA1" stroke-width="12" stroke-linecap="round"/>
+  <!-- Orange figure (center top) - head + V-shape -->
+  <circle cx="100" cy="44" r="9" fill="#E87722"/>
+  <path d="M78 65 Q86 83 100 96 Q114 83 122 65 Q114 60 108 63 Q100 70 92 63 Q86 60 78 65Z" fill="#E87722"/>
 
-  <!-- Green figure (bottom center) -->
-  <circle cx="100" cy="112" r="10" fill="#5CC85A"/>
-  <!-- Green V-shape body (smaller) -->
-  <path d="M84 130 L100 150 L116 130" fill="none" stroke="#5CC85A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Pink/Magenta figure (right) - head + U-shape arms -->
+  <circle cx="150" cy="52" r="9" fill="#E91E8C"/>
+  <path d="M168 75 Q178 95 170 115 Q164 130 150 128 Q136 126 132 112 Q128 96 138 82 Q142 76 148 74 Q154 72 160 74 Q166 74 168 75Z" fill="#E91E8C"/>
+
+  <!-- Green figure (bottom center) - head + V-shape chevron -->
+  <circle cx="100" cy="132" r="9" fill="#70AD47"/>
+  <path d="M76 152 Q86 140 100 134 Q114 140 124 152 Q114 160 108 156 Q100 150 92 156 Q86 160 76 152Z" fill="#70AD47"/>
 </svg>

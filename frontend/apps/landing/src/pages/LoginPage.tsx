@@ -128,7 +128,7 @@ export default function LoginPage() {
         >
           {/* Mobile Logo */}
           <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <img src="/logo.png" alt="SIPO Logo" className="w-10 h-10 rounded-full bg-white object-contain" />
+            <img src="/logo.svg" alt="SIPO Logo" className="w-10 h-10 object-contain" />
             <p className="text-white font-bold text-base">SIPO-Terpadu Tubanan</p>
           </div>
 
