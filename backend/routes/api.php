@@ -92,7 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('users', \App\Http\Controllers\Api\Admin\UserAdminController::class);
         Route::apiResource('posyandus', \App\Http\Controllers\Api\Admin\PosyanduAdminController::class);
         Route::apiResource('jadwals', \App\Http\Controllers\Api\Admin\JadwalAdminController::class);
-        Route::apiResource('pengumuman', \App\Http\Controllers\Api\Admin\PengumumanAdminController::class);
+        Route::apiResource('pengumuman', \App\Http\Controllers\Api\Admin\PengumumanController::class);
         
         // Laporan Kader
         Route::get('/laporan-kader', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'index']);
