@@ -11,6 +11,19 @@ import PengumumanPage from './pages/PengumumanPage';
 import AdminLayout from './layouts/AdminLayout';
 import { ThemeProvider } from './components/ThemeContext';
 
+// --- Cross-domain SSO: baca token dari URL sebelum routing ---
+const _params = new URLSearchParams(window.location.search);
+const _token = _params.get('token');
+const _user = _params.get('user');
+if (_token && _user) {
+  try {
+    localStorage.setItem('admin_auth_token', _token);
+    localStorage.setItem('admin_auth_user', decodeURIComponent(_user));
+  } catch (_) { /* ignore */ }
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const token = localStorage.getItem('admin_auth_token');
   const location = useLocation();

@@ -10,6 +10,19 @@ import PelaksanaanPosyanduPage from './pages/PelaksanaanPosyanduPage';
 import InputPemeriksaanPage from './pages/InputPemeriksaanPage';
 import CetakBarcodePage from './pages/CetakBarcodePage';
 
+// --- Cross-domain SSO: baca token dari URL sebelum routing ---
+const _params = new URLSearchParams(window.location.search);
+const _token = _params.get('token');
+const _user = _params.get('user');
+if (_token && _user) {
+  try {
+    localStorage.setItem('kader_auth_token', _token);
+    localStorage.setItem('kader_auth_user', decodeURIComponent(_user));
+  } catch (_) { /* ignore */ }
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const token = localStorage.getItem('kader_auth_token');
   const location = useLocation();
