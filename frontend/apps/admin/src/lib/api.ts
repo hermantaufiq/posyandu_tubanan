@@ -4,7 +4,7 @@ import axios from 'axios';
 const cache = new Map();
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://shaggy-rockets-cheat.loca.lt/api',
   headers: { "Bypass-Tunnel-Reminder": "true", 'Content-Type': 'application/json', Accept: 'application/json' },
 });
 
