@@ -61,11 +61,16 @@ export default function DashboardLayout() {
             setUser(freshUser);
             localStorage.setItem('auth_user', JSON.stringify(freshUser));
           })
-          .catch(() => {
-            // Token mungkin sudah expired — redirect ke login
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('auth_user');
-            window.location.href = 'https://sipo-warga-brown.vercel.app/login';
+          .catch((error) => {
+            // Hanya logout jika token benar-benar expired (401)
+            // Jika error lain (seperti LocalTunnel 502 atau network error), biarkan user tetap login menggunakan cache
+            if (error.response && error.response.status === 401) {
+              localStorage.removeItem('auth_token');
+              localStorage.removeItem('auth_user');
+              window.location.href = 'https://sipo-warga-brown.vercel.app/login';
+            } else {
+              console.warn("Gagal refresh data user:", error);
+            }
           });
           
         api.get('/masyarakat/pengumuman')
