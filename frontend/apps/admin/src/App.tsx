@@ -18,7 +18,7 @@ const _user = _params.get('user');
 if (_token && _user) {
   try {
     localStorage.setItem('admin_auth_token', _token);
-    localStorage.setItem('admin_auth_user', decodeURIComponent(_user));
+    localStorage.setItem('admin_auth_user', _user);
   } catch (_) { /* ignore */ }
   window.history.replaceState({}, document.title, window.location.pathname);
 }

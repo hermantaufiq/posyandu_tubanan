@@ -16,7 +16,7 @@ const userParam = params.get('user');
 if (tokenParam && userParam) {
   try {
     localStorage.setItem('auth_token', tokenParam);
-    localStorage.setItem('auth_user', decodeURIComponent(userParam));
+    localStorage.setItem('auth_user', userParam);
   } catch (_) { /* ignore */ }
   // Bersihkan URL tanpa reload
   window.history.replaceState({}, document.title, window.location.pathname);

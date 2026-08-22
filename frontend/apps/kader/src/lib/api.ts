@@ -15,13 +15,8 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('kader_auth_token');
-      localStorage.removeItem('kader_auth_user');
-      window.location.href = '/login';
-    }
     return Promise.reject(error);
   }
 );

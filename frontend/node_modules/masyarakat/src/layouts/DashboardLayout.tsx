@@ -62,6 +62,7 @@ export default function DashboardLayout() {
             localStorage.setItem('auth_user', JSON.stringify(freshUser));
           })
           .catch((error) => {
+            alert("Error: " + (error.response?.status || error.message || 'Unknown'));
             // Hanya logout jika token benar-benar expired (401)
             // Jika error lain (seperti LocalTunnel 502 atau network error), biarkan user tetap login menggunakan cache
             if (error.response && error.response.status === 401) {

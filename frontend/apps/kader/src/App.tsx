@@ -17,7 +17,7 @@ const _user = _params.get('user');
 if (_token && _user) {
   try {
     localStorage.setItem('kader_auth_token', _token);
-    localStorage.setItem('kader_auth_user', decodeURIComponent(_user));
+    localStorage.setItem('kader_auth_user', _user);
   } catch (_) { /* ignore */ }
   window.history.replaceState({}, document.title, window.location.pathname);
 }
