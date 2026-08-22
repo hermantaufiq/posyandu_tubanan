@@ -29,30 +29,49 @@ export default function DashboardLayout() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    // Cross-port SSO handler: Check if token is passed via URL
+    // Cross-port SSO: baca token dari URL (dikirim oleh landing page setelah login)
     const params = new URLSearchParams(window.location.search);
     const tokenParam = params.get('token');
     const userParam = params.get('user');
 
+    // Jika ada token di URL, simpan ke sessionStorage dulu
+    // (Chrome tidak menghapus sessionStorage saat bounce tracking, berbeda dengan localStorage)
+    if (tokenParam && userParam) {
+      try {
+        sessionStorage.setItem('sso_token', tokenParam);
+        sessionStorage.setItem('sso_user', userParam);
+      } catch (_) { /* ignore */ }
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Ambil token dari sessionStorage (SSO baru) atau localStorage (sesi lama)
+    const ssoToken = sessionStorage.getItem('sso_token');
+    const ssoUser = sessionStorage.getItem('sso_user');
+
     let token = localStorage.getItem('auth_token');
 
-    if (tokenParam && userParam) {
-      localStorage.setItem('auth_token', tokenParam);
-      localStorage.setItem('auth_user', userParam);
-      window.history.replaceState({}, document.title, window.location.pathname);
-      token = tokenParam;
-      setUser(JSON.parse(userParam));
+    if (ssoToken && ssoUser) {
+      // Pindahkan dari sessionStorage ke localStorage sekarang
+      // (sudah ada interaksi user karena ini sudah dalam konteks render)
+      try {
+        localStorage.setItem('auth_token', ssoToken);
+        localStorage.setItem('auth_user', ssoUser);
+        sessionStorage.removeItem('sso_token');
+        sessionStorage.removeItem('sso_user');
+      } catch (_) { /* ignore */ }
+      token = ssoToken;
+      try { setUser(JSON.parse(ssoUser)); } catch (_) { /* ignore */ }
     } else {
       const userData = localStorage.getItem('auth_user');
       if (userData) {
-        setUser(JSON.parse(userData)); // Set sementara dari cache agar UI tidak blank
+        try { setUser(JSON.parse(userData)); } catch (_) { /* ignore */ }
       } else {
         window.location.href = 'https://sipo-warga-brown.vercel.app/login';
         return;
       }
     }
 
-    // Selalu refresh dari API agar data terbaru (termasuk kategori_warga) tidak ketinggalan
+    // Selalu refresh dari API agar data terbaru tidak ketinggalan
     if (token) {
       import('../lib/api').then(({ default: api }) => {
         api.get('/auth/me')
@@ -62,21 +81,19 @@ export default function DashboardLayout() {
             localStorage.setItem('auth_user', JSON.stringify(freshUser));
           })
           .catch((error) => {
-            alert("Error: " + (error.response?.status || error.message || 'Unknown'));
             // Hanya logout jika token benar-benar expired (401)
-            // Jika error lain (seperti LocalTunnel 502 atau network error), biarkan user tetap login menggunakan cache
             if (error.response && error.response.status === 401) {
               localStorage.removeItem('auth_token');
               localStorage.removeItem('auth_user');
               window.location.href = 'https://sipo-warga-brown.vercel.app/login';
             } else {
-              console.warn("Gagal refresh data user:", error);
+              console.warn('Gagal refresh data user (bukan 401, diabaikan):', error.message);
             }
           });
           
         api.get('/masyarakat/pengumuman')
           .then(res => setUnreadCount(res.data.total))
-          .catch(console.error);
+          .catch(() => { /* non-critical */ });
       });
     }
   }, []);
