@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Sparkles, MessageCircle } from 'lucide-react';
-import axios from 'axios';
+import api from '../lib/api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -76,7 +76,7 @@ export default function AiChatWidget() {
 
     try {
       const history = messages.slice(1).map(m => ({ role: m.role, content: m.content }));
-      const res = await axios.post('http://localhost:8000/api/ai/chat', { message: messageText, history });
+      const res = await api.post('/ai/chat', { message: messageText, history });
       setMessages(prev => [...prev, { role: 'assistant', content: res.data.reply }]);
     } catch {
       setMessages(prev => [...prev, {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Megaphone, Plus, Trash2, Copy, CheckCircle,
-  Calendar, Syringe, Heart, Info, Loader2, MessageCircle, Printer
+  Calendar, Syringe, Heart, Info, Loader2, MessageCircle, Printer, Sparkles, X
 } from "lucide-react";
 import api from "../lib/api";
 
@@ -37,6 +37,11 @@ export default function PengumumanPage() {
   const [copied, setCopied] = useState<number | null>(null);
   const [deleting, setDeleting] = useState<number | null>(null);
   const [form, setForm] = useState({ judul: "", isi: "", kategori: "jadwal" });
+  
+  // AI Draft State
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -78,6 +83,38 @@ export default function PengumumanPage() {
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
+  const handleAiGenerate = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiGenerating(true);
+    try {
+      const res = await api.post('/ai/assistant', {
+        task: 'generate_broadcast',
+        prompt: aiPrompt,
+        data: { kategori: form.kategori }
+      });
+      const generatedText = res.data.reply;
+      
+      // Pisahkan baris pertama sebagai judul (tanpa asteriks jika ada), sisanya isi
+      const lines = generatedText.split('\n').map((l: string) => l.trim()).filter(Boolean);
+      let newJudul = form.judul;
+      let newIsi = generatedText;
+      
+      if (lines.length > 0) {
+        // Asumsi baris pertama adalah judul
+        newJudul = lines[0].replace(/\*/g, ''); 
+        newIsi = lines.slice(1).join('\n');
+      }
+
+      setForm(f => ({ ...f, judul: newJudul, isi: newIsi }));
+      setShowAiModal(false);
+      setAiPrompt("");
+    } catch (err) {
+      alert("Gagal membuat pengumuman via AI.");
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -103,7 +140,44 @@ export default function PengumumanPage() {
 
       {/* Form Buat Pengumuman */}
       <form onSubmit={submit} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 print:hidden">
-        <h3 className="font-semibold text-white text-sm">📝 Buat Pengumuman Baru</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-white text-sm">📝 Buat Pengumuman Baru</h3>
+          <button
+            type="button"
+            onClick={() => setShowAiModal(!showAiModal)}
+            className="flex items-center gap-1.5 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border border-indigo-500/20"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Draft via AI
+          </button>
+        </div>
+
+        {/* AI Draft Modal/Panel */}
+        {showAiModal && (
+          <div className="bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-xl space-y-3 mb-4">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-indigo-300">Tuliskan Topik Pengumuman</label>
+              <button type="button" onClick={() => setShowAiModal(false)} className="text-indigo-400 hover:text-indigo-300">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <textarea
+              value={aiPrompt}
+              onChange={e => setAiPrompt(e.target.value)}
+              placeholder="Contoh: Tolong buatkan pengumuman posyandu lansia besok jam 8 pagi, bahasa krama halus..."
+              className="w-full bg-slate-900 border border-indigo-500/30 rounded-lg px-3 py-2 text-sm text-indigo-100 placeholder-indigo-500/50 focus:outline-none focus:border-indigo-400 resize-none"
+              rows={2}
+            />
+            <button
+              type="button"
+              onClick={handleAiGenerate}
+              disabled={aiGenerating || !aiPrompt.trim()}
+              className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            >
+              {aiGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {aiGenerating ? "Sedang menyusun draft..." : "Buatkan Draft Pengumuman"}
+            </button>
+          </div>
+        )}
 
         {/* Kategori */}
         <div>

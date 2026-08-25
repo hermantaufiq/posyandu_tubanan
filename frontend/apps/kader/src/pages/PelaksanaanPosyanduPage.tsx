@@ -42,19 +42,15 @@ export default function PelaksanaanPosyanduPage() {
     fetchJadwalAndAntrian();
   }, []);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent, overrideQuery?: string) => {
     e.preventDefault();
-    if (!searchQuery || searchQuery.length < 3) return;
+    const query = overrideQuery ?? searchQuery;
+    if (!query || query.length < 3) return;
     setIsSearching(true);
     try {
-      // Mocking search for now, ideally backend has a search endpoint
-      // Let's assume we fetch from /admin/penduduk (if accessible) or just fetch all
-      const res = await api.get(`/admin/penduduk`);
-      const filtered = res.data.data.filter((u: any) => 
-        u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (u.nik && u.nik.includes(searchQuery))
-      );
-      setSearchResults(filtered);
+      const res = await api.get(`/kader/warga`, { params: { search: query } });
+      // The backend returns paginated data (res.data.data.data)
+      setSearchResults(res.data.data.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -197,15 +193,26 @@ export default function PelaksanaanPosyanduPage() {
                     <Scanner
                       onScan={(result) => {
                         if (result && result.length > 0) {
-                          const text = result[0].rawValue;
-                          if (text && text.length > 3) { // pastikan bukan scan kosong
+                          let text = result[0].rawValue;
+                          if (text && text.length > 3) {
+                            // Parse JSON barcode dari portal masyarakat
+                            // Format: {"app":"POSYANDU-TUBANAN","nik":"...","nama":"..."}
+                            try {
+                              const parsed = JSON.parse(text);
+                              if (parsed.app === 'POSYANDU-TUBANAN') {
+                                // NIK dan nama ada di level atas, bukan di dalam "user"
+                                text = parsed.nik || parsed.nama || text;
+                              }
+                            } catch (e) {
+                              // Bukan JSON — pakai text apa adanya (NIK langsung dari stiker)
+                            }
+                            
                             setSearchQuery(text);
                             setActiveTab('cari');
-                            // Otomatis klik tombol cari
-                            setTimeout(() => {
-                              const formEvent = new Event('submit', { cancelable: true, bubbles: true });
-                              handleSearch(formEvent as any);
-                            }, 500);
+                            // Langsung search dengan text yang sudah di-extract
+                            // (tidak pakai state agar terhindar dari stale closure)
+                            const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+                            handleSearch(fakeEvent, text);
                           }
                         }
                       }}

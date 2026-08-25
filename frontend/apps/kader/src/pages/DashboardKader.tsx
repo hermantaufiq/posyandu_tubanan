@@ -3,6 +3,7 @@ import { LogOut, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRigh
 import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import { useTheme } from "../components/ThemeContext";
+import AiKaderAssistant from "../components/AiKaderAssistant";
 
 export default function DashboardKader() {
   const navigate = useNavigate();
@@ -103,6 +104,9 @@ export default function DashboardKader() {
             <p className="text-xs font-semibold uppercase tracking-wider text-emerald-50 mt-1">Laporan Terkirim</p>
           </div>
         </div>
+
+        {/* AI Assistant Kader */}
+        <AiKaderAssistant />
 
         {/* Navigator Menu */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -46,6 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
+    // AI Assistant for Kader & Admin
+    Route::post('/ai/assistant', [\App\Http\Controllers\Api\AiAssistantController::class, 'assistant']);
+
     // Portal Masyarakat Routes
     Route::prefix('masyarakat')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Api\Masyarakat\DashboardController::class, 'index']);
