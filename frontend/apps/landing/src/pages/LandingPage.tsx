@@ -240,21 +240,21 @@ export default function LandingPage() {
               <p className="text-slate-500 mt-2 text-sm">Pilih portal sesuai dengan peran Anda di Posyandu Desa Tubanan</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              <a href="https://sipo-masyarakat-tubanan.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col items-center text-center">
+              <a href="https://masyarakat-murex.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Users className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold text-slate-900 mb-1">Portal Masyarakat</h3>
                 <p className="text-xs text-slate-500">Pendaftaran antrian, jadwal & KMS</p>
               </a>
-              <a href="https://sipo-kader-sage.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-pink-300 transition-all group flex flex-col items-center text-center">
+              <a href="https://kader-murex.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-pink-300 transition-all group flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Heart className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold text-slate-900 mb-1">Portal Kader</h3>
                 <p className="text-xs text-slate-500">Meja pendaftaran & pengukuran</p>
               </a>
-              <a href="https://sipo-admin-mu.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition-all group flex flex-col items-center text-center">
+              <a href="https://admin-murex.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition-all group flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Shield className="w-6 h-6" />
                 </div>
