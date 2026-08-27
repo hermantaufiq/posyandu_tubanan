@@ -398,15 +398,14 @@ const CHART_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4
 function GroupChart({ title, fields, pwsData }: { title: string; fields: {key: string; label: string}[]; pwsData: any }) {
   const isKehadiran = title.toLowerCase().includes("kehadiran");
   
-  // Data untuk chart
+  // Data untuk chart  
   const chartData = fields
-    .map(f => ({ name: f.label.replace(/\(.*\)/, '').trim(), value: pwsData[f.key] || 0 }))
-    .filter(d => d.value > 0);
+    .map(f => ({ name: f.label.replace(/\(.*\)/g, '').trim(), value: pwsData[f.key] || 0 }));
 
-  if (chartData.length === 0) return null;
+  const hasAnyData = chartData.some(d => d.value > 0);
 
-  if (isKehadiran && chartData.length >= 2) {
-    // Pie chart: ambil data Datang vs Tidak Datang
+  if (isKehadiran) {
+    // Pie chart untuk Kehadiran
     const hadir = fields.filter(f => f.key.includes("DATANG") && !f.key.includes("TIDAK"))
       .reduce((sum, f) => sum + (pwsData[f.key] || 0), 0);
     const tidakHadir = pwsData["TIDAK_DATANG"] || 0;
@@ -416,20 +415,21 @@ function GroupChart({ title, fields, pwsData }: { title: string; fields: {key: s
     const pieData = [
       { name: "Hadir", value: hadir },
       { name: "Tidak Hadir", value: tidakHadir },
-    ].filter(d => d.value > 0);
+    ];
 
     const persen = sasaranTotal > 0 ? Math.round((hadir / sasaranTotal) * 100) : 0;
-
-    if (pieData.length === 0) return null;
 
     return (
       <div className="mt-4 pt-4 border-t border-current/10">
         <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-3">📊 Visualisasi Kehadiran</p>
+        {hadir === 0 && tidakHadir === 0 ? (
+          <p className="text-center text-xs text-slate-400 py-6 italic">Isi kolom Datang dan Tidak Datang untuk melihat diagram pie</p>
+        ) : (
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-              <Pie data={pieData} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false}>
-                {pieData.map((_, i) => (
+              <Pie data={pieData.filter(d => d.value > 0)} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false}>
+                {pieData.filter(d => d.value > 0).map((_, i) => (
                   <Cell key={i} fill={i === 0 ? '#10b981' : '#ef4444'} />
                 ))}
               </Pie>
@@ -445,6 +445,7 @@ function GroupChart({ title, fields, pwsData }: { title: string; fields: {key: s
             </div>
           )}
         </div>
+        )}
       </div>
     );
   }
@@ -453,19 +454,23 @@ function GroupChart({ title, fields, pwsData }: { title: string; fields: {key: s
   return (
     <div className="mt-4 pt-4 border-t border-current/10">
       <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-3">📊 Visualisasi Data</p>
+      {!hasAnyData ? (
+        <p className="text-center text-xs text-slate-400 py-6 italic">Isi angka di atas untuk melihat diagram batang</p>
+      ) : (
       <ResponsiveContainer width="100%" height={180}>
-        <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+        <BarChart data={chartData.filter(d => d.value > 0)} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
           <XAxis dataKey="name" tick={{ fontSize: 10 }} />
           <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
           <RTooltip />
           <Bar dataKey="value" name="Jumlah" radius={[6, 6, 0, 0]}>
-            {chartData.map((_, i) => (
+            {chartData.filter(d => d.value > 0).map((_, i) => (
               <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      )}
     </div>
   );
 }
