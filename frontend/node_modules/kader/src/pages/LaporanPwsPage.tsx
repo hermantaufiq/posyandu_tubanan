@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, Loader2, Save, Download, Printer } from "lucide-react";
 import api from "../lib/api";
+import {
+  PieChart, Pie, Cell, Tooltip as RTooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
+} from "recharts";
 
 // Warna kartu tiap grup (untuk membantu kader membedakan seksi)
 type GroupColor = 'blue' | 'emerald' | 'violet' | 'amber' | 'rose' | 'cyan' | 'orange' | 'indigo';
@@ -388,6 +392,86 @@ const GROUP_COLOR_MAP: Record<GroupColor, { card: string; title: string; dot: st
   indigo: { card: 'bg-indigo-50 dark:bg-indigo-900/10 border-indigo-200 dark:border-indigo-800/50', title: 'text-indigo-800 dark:text-indigo-300', dot: 'bg-indigo-500' },
 };
 
+const CHART_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#6366f1'];
+
+// Komponen chart dinamis per grup
+function GroupChart({ title, fields, pwsData }: { title: string; fields: {key: string; label: string}[]; pwsData: any }) {
+  const isKehadiran = title.toLowerCase().includes("kehadiran");
+  
+  // Data untuk chart
+  const chartData = fields
+    .map(f => ({ name: f.label.replace(/\(.*\)/, '').trim(), value: pwsData[f.key] || 0 }))
+    .filter(d => d.value > 0);
+
+  if (chartData.length === 0) return null;
+
+  if (isKehadiran && chartData.length >= 2) {
+    // Pie chart: ambil data Datang vs Tidak Datang
+    const hadir = fields.filter(f => f.key.includes("DATANG") && !f.key.includes("TIDAK"))
+      .reduce((sum, f) => sum + (pwsData[f.key] || 0), 0);
+    const tidakHadir = pwsData["TIDAK_DATANG"] || 0;
+    const sasaranTotal = fields.filter(f => f.key.includes("SASARAN"))
+      .reduce((sum, f) => sum + (pwsData[f.key] || 0), 0);
+
+    const pieData = [
+      { name: "Hadir", value: hadir },
+      { name: "Tidak Hadir", value: tidakHadir },
+    ].filter(d => d.value > 0);
+
+    const persen = sasaranTotal > 0 ? Math.round((hadir / sasaranTotal) * 100) : 0;
+
+    if (pieData.length === 0) return null;
+
+    return (
+      <div className="mt-4 pt-4 border-t border-current/10">
+        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-3">📊 Visualisasi Kehadiran</p>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie data={pieData} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false}>
+                {pieData.map((_, i) => (
+                  <Cell key={i} fill={i === 0 ? '#10b981' : '#ef4444'} />
+                ))}
+              </Pie>
+              <RTooltip formatter={(val: number) => [val, 'Jumlah']} />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+          {sasaranTotal > 0 && (
+            <div className="text-center bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 min-w-[120px]">
+              <p className="text-3xl font-black text-emerald-600">{persen}%</p>
+              <p className="text-xs text-slate-500 font-semibold mt-1">Tingkat Kehadiran</p>
+              <p className="text-xs text-slate-400">{hadir} dari {sasaranTotal}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Bar chart untuk grup lainnya
+  return (
+    <div className="mt-4 pt-4 border-t border-current/10">
+      <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-3">📊 Visualisasi Data</p>
+      <ResponsiveContainer width="100%" height={180}>
+        <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+          <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+          <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+          <RTooltip />
+          <Bar dataKey="value" name="Jumlah" radius={[6, 6, 0, 0]}>
+            {chartData.map((_, i) => (
+              <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+
+
 
 export default function LaporanPwsPage() {
   const navigate = useNavigate();
@@ -559,6 +643,8 @@ export default function LaporanPwsPage() {
                         </div>
                       ))}
                     </div>
+                    {/* Live Chart Preview */}
+                    <GroupChart title={group.title} fields={group.fields} pwsData={pwsData} />
                   </div>
                   );
                 })}
