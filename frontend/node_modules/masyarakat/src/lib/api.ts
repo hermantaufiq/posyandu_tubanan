@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://shaggy-rockets-cheat.loca.lt/api',
+  baseURL: 'https://tubanan-api-123.loca.lt/api',
   headers: { "Bypass-Tunnel-Reminder": "true",
     'Content-Type': 'application/json',
     'Accept': 'application/json',
