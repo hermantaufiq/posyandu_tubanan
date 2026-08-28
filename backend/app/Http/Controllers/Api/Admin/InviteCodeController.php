@@ -38,9 +38,12 @@ class InviteCodeController extends Controller
 
         file_put_contents($envPath, $env);
         Artisan::call('config:clear');
+        Artisan::call('config:cache');
 
         return response()->json([
             'message' => 'Kode undangan berhasil diperbarui.',
+            'nakes_code' => env('NAKES_INVITE_CODE', 'NAKES2025'),
+            'kader_code' => env('KADER_INVITE_CODE', 'KADER2025'),
         ]);
     }
 }
