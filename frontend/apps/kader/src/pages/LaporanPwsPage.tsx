@@ -15,7 +15,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
   // ─── BUKU 1: BAYI, BALITA & APRAS ──────────────────────────────────────────
   "Bayi, Balita & Apras (0-71 Bulan)": [
     {
-      title: "REKAP SASARAN DAN KEHADIRAN",
+      title: "REKAP SASARAN",
       color: "blue",
       fields: [
         { key: "SASARAN_BAYI",    label: "Sasaran Bayi (0-11 bln)" },
@@ -71,7 +71,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
   // ─── BUKU 2: IBU HAMIL, NIFAS & MENYUSUI ───────────────────────────────────
   "Ibu Hamil, Nifas & Menyusui": [
     {
-      title: "REKAP SASARAN DAN KEHADIRAN",
+      title: "REKAP SASARAN",
       color: "rose",
       fields: [
         { key: "SASARAN_BUMIL",  label: "Sasaran Ibu Hamil (Bumil)" },
@@ -132,7 +132,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
   // ─── BUKU 3: ANAK SEKOLAH & REMAJA ─────────────────────────────────────────
   "Anak Sekolah & Remaja (6-18 Tahun)": [
     {
-      title: "REKAP SASARAN DAN KEHADIRAN",
+      title: "REKAP SASARAN",
       color: "blue",
       fields: [
         { key: "SASARAN_6_14",    label: "Sasaran Usia 6-14 Thn" },
@@ -202,7 +202,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
   // ─── BUKU 4: USIA DEWASA ──────────────────────────────────────────
   "Usia Dewasa (19-59 Tahun)": [
     {
-      title: "REKAP SASARAN DAN KEHADIRAN",
+      title: "REKAP SASARAN",
       color: "blue",
       fields: [
         { key: "SASARAN_DEWASA",   label: "Sasaran Usia Dewasa" },
@@ -272,7 +272,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
   // ─── TAMBAHAN: IBU MENYUSUI (BUSUI) — terpisah ─────────────────────────────
   "Ibu Menyusui / Busui": [
     {
-      title: "REKAP SASARAN DAN KEHADIRAN BUSUI",
+      title: "REKAP SASARAN",
       color: "rose",
       fields: [
         { key: "SASARAN_BUSUI",    label: "Jumlah Sasaran Busui" },
@@ -321,7 +321,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
   // ─── BUKU 5: LANSIA ──────────────────────────────────────────────────────────
   "Lansia (≥60 Tahun)": [
     {
-      title: "REKAP SASARAN DAN KEHADIRAN",
+      title: "REKAP SASARAN",
       color: "blue",
       fields: [
         { key: "SASARAN_LANSIA",   label: "Jumlah Sasaran Lansia" },
