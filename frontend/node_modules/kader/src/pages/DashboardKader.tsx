@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import { useTheme } from "../components/ThemeContext";
 import AiKaderAssistant from "../components/AiKaderAssistant";
+import { PieChart, Pie, Cell, Tooltip as RTooltip, Legend, ResponsiveContainer } from "recharts";
 
 export default function DashboardKader() {
   const navigate = useNavigate();
@@ -107,6 +108,71 @@ export default function DashboardKader() {
 
         {/* AI Assistant Kader */}
         <AiKaderAssistant />
+
+        {/* Dashboard Chart: Rekap Sasaran dan Kehadiran */}
+        {(() => {
+          if (!riwayat.pws || riwayat.pws.length === 0) return null;
+
+          // Hitung total dari semua laporan PWS (bisa difilter per bulan jika butuh, tapi ini global)
+          let totalHadir = 0;
+          let totalTidakHadir = 0;
+          let totalSasaran = 0;
+
+          riwayat.pws.forEach((p: any) => {
+            const data = p.data || {};
+            Object.keys(data).forEach(key => {
+              if (key.includes("DATANG") && !key.includes("TIDAK")) totalHadir += data[key];
+              if (key.includes("TIDAK_DATANG")) totalTidakHadir += data[key];
+              if (key.includes("SASARAN")) totalSasaran += data[key];
+            });
+          });
+
+          if (totalHadir === 0 && totalTidakHadir === 0) return null;
+
+          const pieData = [
+            { name: "Hadir", value: totalHadir },
+            { name: "Tidak Hadir", value: totalTidakHadir },
+          ].filter(d => d.value > 0);
+
+          const persen = totalSasaran > 0 ? Math.round((totalHadir / totalSasaran) * 100) : (totalHadir > 0 ? 100 : 0);
+
+          return (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm mb-8 flex flex-col md:flex-row items-center gap-6">
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">📊 Rekap Sasaran dan Kehadiran</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Total akumulasi warga yang datang ke Posyandu berdasarkan laporan PWS yang sudah Anda kirimkan.</p>
+                
+                <div className="flex items-center gap-4">
+                  <div className="bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-800/50">
+                    <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{totalHadir}</p>
+                    <p className="text-xs font-bold text-emerald-800/60 dark:text-emerald-400/60 uppercase">Hadir</p>
+                  </div>
+                  <div className="bg-rose-50 dark:bg-rose-900/20 px-4 py-3 rounded-2xl border border-rose-100 dark:border-rose-800/50">
+                    <p className="text-2xl font-black text-rose-600 dark:text-rose-400">{totalTidakHadir}</p>
+                    <p className="text-xs font-bold text-rose-800/60 dark:text-rose-400/60 uppercase">Tidak Hadir</p>
+                  </div>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-3 rounded-2xl border border-blue-100 dark:border-blue-800/50">
+                    <p className="text-2xl font-black text-blue-600 dark:text-blue-400">{persen}%</p>
+                    <p className="text-xs font-bold text-blue-800/60 dark:text-blue-400/60 uppercase">Tingkat</p>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false}>
+                      {pieData.map((_, i) => (
+                        <Cell key={i} fill={i === 0 ? '#10b981' : '#ef4444'} />
+                      ))}
+                    </Pie>
+                    <RTooltip formatter={(val: number) => [val, 'Jumlah']} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Navigator Menu */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
