@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://tubanan-api-123.loca.lt/api/$1" },
+    { "source": "/api/(.*)", "destination": "https://mean-rabbit-89.loca.lt/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
