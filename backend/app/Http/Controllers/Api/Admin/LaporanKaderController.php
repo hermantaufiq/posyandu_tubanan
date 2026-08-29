@@ -36,4 +36,18 @@ class LaporanKaderController extends Controller
             'data'    => $foto
         ]);
     }
+
+    /**
+     * Update status PWS (verifikasi)
+     */
+    public function verifikasiPws(Request $request, $id)
+    {
+        $pws = LaporanPws::findOrFail($id);
+        $pws->update(['status' => 'terverifikasi']);
+
+        return response()->json([
+            'message' => 'Data PWS digital berhasil diverifikasi.',
+            'data'    => $pws
+        ]);
+    }
 }

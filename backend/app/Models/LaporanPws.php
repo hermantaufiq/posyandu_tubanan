@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class LaporanPws extends Model
 {
     protected $fillable = [
-        'posyandu_id', 'kader_id', 'bulan', 'tahun', 'kategori_sasaran', 'data'
+        'posyandu_id', 'kader_id', 'bulan', 'tahun', 'kategori_sasaran', 'data', 'status'
     ];
 
     protected $casts = [

@@ -99,7 +99,8 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Laporan Kader
         Route::get('/laporan-kader', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'index']);
-        Route::post('/laporan-kader/{id}/verifikasi', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'verifikasiFoto']);
+        Route::put('/laporan-kader/foto/{id}/verifikasi', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'verifikasiFoto']);
+        Route::put('/laporan-kader/pws/{id}/verifikasi', [\App\Http\Controllers\Api\Admin\LaporanKaderController::class, 'verifikasiPws']);
     });
 
     // Portal Admin Routes

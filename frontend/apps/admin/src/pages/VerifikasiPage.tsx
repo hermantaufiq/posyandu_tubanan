@@ -49,13 +49,23 @@ export default function LaporanKaderPage() {
     }
   };
 
-  const handleVerify = async (id: number) => {
+  const handleVerifyFoto = async (id: number) => {
     try {
-      await api.post(`/admin/laporan-kader/${id}/verifikasi`);
+      await api.put(`/admin/laporan-kader/foto/${id}/verifikasi`);
       fetchData();
     } catch (error) {
       console.error(error);
-      alert("Gagal memverifikasi laporan");
+      alert("Gagal memverifikasi foto laporan");
+    }
+  };
+
+  const handleVerifyPws = async (id: number) => {
+    try {
+      await api.put(`/admin/laporan-kader/pws/${id}/verifikasi`);
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      alert("Gagal memverifikasi laporan PWS");
     }
   };
 
@@ -155,6 +165,7 @@ export default function LaporanKaderPage() {
                     <th className="px-6 py-4 font-semibold">Kategori</th>
                     <th className="px-6 py-4 font-semibold">Oleh</th>
                     <th className="px-6 py-4 font-semibold text-left">Data Indikator PWS</th>
+                    <th className="px-6 py-4 font-semibold text-center">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -177,6 +188,20 @@ export default function LaporanKaderPage() {
                             </div>
                           ))}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 align-top text-center">
+                        {p.status === 'terverifikasi' ? (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 text-xs font-bold">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Terverifikasi
+                          </div>
+                        ) : (
+                          <button 
+                            onClick={() => handleVerifyPws(p.id)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-500/20 dark:hover:bg-blue-500/30 dark:text-blue-400 text-xs font-bold transition-colors shadow-sm"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Verifikasi
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -228,9 +253,9 @@ export default function LaporanKaderPage() {
                   )}
                   
                   <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
-                    {f.status === 'menunggu_verifikasi' ? (
+                  {f.status === 'menunggu_verifikasi' ? (
                       <button 
-                        onClick={() => handleVerify(f.id)}
+                        onClick={() => handleVerifyFoto(f.id)}
                         className="w-full bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2"
                       >
                         <CheckCircle2 className="w-5 h-5" /> Verifikasi Arsip
