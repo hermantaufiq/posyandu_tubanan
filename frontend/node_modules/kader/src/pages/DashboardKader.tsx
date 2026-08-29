@@ -160,12 +160,12 @@ export default function DashboardKader() {
               <div className="w-full md:w-1/2 h-[220px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false}>
+                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({name, percent}) => `${name} ${((percent||0)*100).toFixed(0)}%`} labelLine={false}>
                       {pieData.map((_, i) => (
                         <Cell key={i} fill={i === 0 ? '#10b981' : '#ef4444'} />
                       ))}
                     </Pie>
-                    <RTooltip formatter={(val: number) => [val, 'Jumlah']} />
+                    <RTooltip formatter={(val: any) => [val, 'Jumlah']} />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>

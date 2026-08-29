@@ -428,12 +428,12 @@ function GroupChart({ title, fields, pwsData }: { title: string; fields: {key: s
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-              <Pie data={pieData.filter(d => d.value > 0)} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false}>
+              <Pie data={pieData.filter(d => d.value > 0)} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({name, percent}) => `${name} ${((percent||0)*100).toFixed(0)}%`} labelLine={false}>
                 {pieData.filter(d => d.value > 0).map((_, i) => (
                   <Cell key={i} fill={i === 0 ? '#10b981' : '#ef4444'} />
                 ))}
               </Pie>
-              <RTooltip formatter={(val: number) => [val, 'Jumlah']} />
+              <RTooltip formatter={(val: any) => [val, 'Jumlah']} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
