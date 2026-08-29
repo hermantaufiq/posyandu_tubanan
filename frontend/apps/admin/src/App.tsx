@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import JadwalPage from './pages/JadwalPage';
+import MasterKegiatanPage from './pages/MasterKegiatanPage';
+import RekapSasaranPage from './pages/RekapSasaranPage';
 import UsersPage from './pages/UsersPage';
 import LaporanPage from './pages/LaporanPage';
 import LaporanKaderPage from './pages/LaporanKaderPage';
@@ -42,7 +43,8 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<RequireAuth><AdminLayout /></RequireAuth>}>
             <Route index element={<DashboardPage />} />
-            <Route path="jadwal" element={<JadwalPage />} />
+            <Route path="master-kegiatan" element={<MasterKegiatanPage />} />
+            <Route path="rekap-sasaran" element={<RekapSasaranPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="laporan" element={<LaporanPage />} />
             <Route path="laporan-kader" element={<LaporanKaderPage />} />

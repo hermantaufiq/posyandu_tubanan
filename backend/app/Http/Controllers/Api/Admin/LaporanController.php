@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Antrian;
 use App\Models\Jadwal;
 use App\Models\Pemeriksaan;
+use App\Models\Posyandu;
+use App\Models\LaporanPws;
 
 class LaporanController extends Controller
 {
@@ -63,5 +66,73 @@ class LaporanController extends Controller
             ]);
 
         return response()->json(['data' => $data]);
+    }
+
+    public function rekapSasaran(Request $request)
+    {
+        $query = LaporanPws::with('posyandu');
+        if ($request->has('bulan')) {
+            $query->where('bulan', $request->bulan);
+        }
+        if ($request->has('tahun')) {
+            $query->where('tahun', $request->tahun);
+        }
+
+        $laporans = $query->get();
+        $posyandus = Posyandu::all();
+
+        $totals = [
+            'bumil' => 0,
+            'balita' => 0,
+            'remaja' => 0,
+            'dewasa' => 0,
+            'lansia' => 0,
+        ];
+
+        $rekapPerPosyandu = [];
+        foreach ($posyandus as $p) {
+            $rekapPerPosyandu[$p->id] = [
+                'nama' => $p->name,
+                'bumil' => 0,
+                'balita' => 0,
+                'remaja' => 0,
+                'dewasa' => 0,
+                'lansia' => 0,
+                'updated' => false,
+            ];
+        }
+
+        foreach ($laporans as $lap) {
+            $data = is_string($lap->data) ? json_decode($lap->data, true) : $lap->data;
+            if (!is_array($data)) continue;
+
+            $pId = $lap->posyandu_id;
+            if (!isset($rekapPerPosyandu[$pId])) continue;
+
+            $rekapPerPosyandu[$pId]['updated'] = true;
+
+            $bumil = intval($data['SASARAN_BUMIL'] ?? 0);
+            $balita = intval($data['SASARAN_BAYI'] ?? 0) + intval($data['SASARAN_BALITA_APRAS'] ?? 0);
+            $remaja = intval($data['SASARAN_6_14'] ?? 0) + intval($data['SASARAN_15_18'] ?? 0);
+            $dewasa = intval($data['SASARAN_DEWASA'] ?? 0);
+            $lansia = intval($data['SASARAN_LANSIA'] ?? 0);
+
+            $rekapPerPosyandu[$pId]['bumil'] += $bumil;
+            $rekapPerPosyandu[$pId]['balita'] += $balita;
+            $rekapPerPosyandu[$pId]['remaja'] += $remaja;
+            $rekapPerPosyandu[$pId]['dewasa'] += $dewasa;
+            $rekapPerPosyandu[$pId]['lansia'] += $lansia;
+
+            $totals['bumil'] += $bumil;
+            $totals['balita'] += $balita;
+            $totals['remaja'] += $remaja;
+            $totals['dewasa'] += $dewasa;
+            $totals['lansia'] += $lansia;
+        }
+
+        return response()->json([
+            'totals' => $totals,
+            'posyandu' => array_values($rekapPerPosyandu)
+        ]);
     }
 }

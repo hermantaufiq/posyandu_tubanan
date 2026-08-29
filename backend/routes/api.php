@@ -120,6 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Laporan
         Route::get('/laporan/antrian', [\App\Http\Controllers\Api\Admin\LaporanController::class, 'antrian']);
         Route::get('/laporan/pemeriksaan', [\App\Http\Controllers\Api\Admin\LaporanController::class, 'pemeriksaan']);
+        Route::get('/laporan/rekap-sasaran', [\App\Http\Controllers\Api\Admin\LaporanController::class, 'rekapSasaran']);
 
         // Posyandu CRUD
         Route::get('/posyandu', [\App\Http\Controllers\Api\Admin\PosyanduAdminController::class, 'index']);

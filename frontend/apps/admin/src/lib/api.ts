@@ -48,6 +48,11 @@ api.interceptors.response.use(r => {
   
   return r;
 }, err => {
+  if (err.response?.status === 401) {
+    localStorage.removeItem('admin_auth_token');
+    localStorage.removeItem('admin_auth_user');
+    window.location.href = '/login';
+  }
   return Promise.reject(err);
 });
 
