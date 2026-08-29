@@ -33,6 +33,7 @@ export default function LaporanKaderPage() {
   const [laporan, setLaporan] = useState<{fotos: any[], pws: any[]}>({ fotos: [], pws: [] });
   const [loading, setLoading] = useState(true);
   const [selectedFoto, setSelectedFoto] = useState<string | null>(null);
+  const [selectedPwsData, setSelectedPwsData] = useState<{title: string, data: any} | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -175,19 +176,17 @@ export default function LaporanKaderPage() {
                       <td className="px-6 py-4 font-semibold text-blue-700 dark:text-blue-400 align-top">{p.posyandu?.name}</td>
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium align-top">{p.kategori_sasaran}</td>
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400 align-top">{p.kader?.name}</td>
-                      <td className="px-6 py-4 align-top max-w-md">
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 rounded-xl shadow-sm">
-                          {Object.entries(p.data || {}).map(([key, val]) => (
-                            <div key={key} className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-1 last:border-0">
-                              <span className="text-slate-500 dark:text-slate-400 font-medium text-xs">
-                                {formatPwsKey(key)}
-                              </span>
-                              <span className="font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">
-                                {String(val)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                      <td className="px-6 py-4 align-top">
+                        <button 
+                          onClick={() => setSelectedPwsData({
+                            title: `${p.kategori_sasaran} - ${p.posyandu?.name} (${p.bulan} ${p.tahun})`, 
+                            data: p.data 
+                          })}
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors border border-slate-200 dark:border-slate-700 shadow-sm"
+                        >
+                          <Activity className="w-3.5 h-3.5 text-blue-500" />
+                          Lihat {Object.keys(p.data || {}).length} Indikator
+                        </button>
                       </td>
                       <td className="px-6 py-4 align-top text-center">
                         {p.status === 'terverifikasi' ? (
@@ -280,6 +279,40 @@ export default function LaporanKaderPage() {
             <X className="w-8 h-8" />
           </button>
           <img src={selectedFoto} alt="Preview Zoom" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
+        </div>
+      )}
+
+      {/* Modal PWS Data Viewer */}
+      {selectedPwsData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={(e) => { if(e.target === e.currentTarget) setSelectedPwsData(null) }}>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-blue-50/50 dark:bg-slate-800/50">
+              <h3 className="font-black text-lg text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-blue-500" />
+                {selectedPwsData.title}
+              </h3>
+              <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 p-2 rounded-full transition-colors shadow-sm" onClick={() => setSelectedPwsData(null)}>
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(selectedPwsData.data || {}).map(([key, val]) => (
+                  <div key={key} className="flex justify-between items-center bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+                    <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">
+                      {formatPwsKey(key)}
+                    </span>
+                    <span className="font-black text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-3 py-1.5 rounded-lg text-base">
+                      {String(val)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-end">
+              <button onClick={() => setSelectedPwsData(null)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold transition-colors">Tutup</button>
+            </div>
+          </div>
         </div>
       )}
 
