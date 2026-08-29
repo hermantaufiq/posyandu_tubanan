@@ -71,10 +71,23 @@ class LaporanController extends Controller
     public function rekapSasaran(Request $request)
     {
         $query = LaporanPws::with('posyandu');
-        if ($request->has('bulan')) {
-            $query->where('bulan', $request->bulan);
+        if ($request->has('bulan') && $request->bulan) {
+            $bulan = $request->bulan;
+            // Jika format angka, kita ubah ke array untuk mencari angka dan nama
+            if (is_numeric($bulan)) {
+                $bulanName = $this->getIndonesianMonth((int)$bulan);
+                $query->where(function($q) use ($bulan, $bulanName) {
+                    $q->where('bulan', $bulan)
+                      ->orWhere('bulan', $bulanName)
+                      ->orWhere('bulan', strtolower($bulanName))
+                      ->orWhere('bulan', strtoupper($bulanName));
+                });
+            } else {
+                // Jika format nama
+                $query->where('bulan', 'LIKE', "%{$bulan}%");
+            }
         }
-        if ($request->has('tahun')) {
+        if ($request->has('tahun') && $request->tahun) {
             $query->where('tahun', $request->tahun);
         }
 
@@ -134,5 +147,15 @@ class LaporanController extends Controller
             'totals' => $totals,
             'posyandu' => array_values($rekapPerPosyandu)
         ]);
+    }
+
+    private function getIndonesianMonth($numericMonth)
+    {
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+        return $months[$numericMonth] ?? '';
     }
 }

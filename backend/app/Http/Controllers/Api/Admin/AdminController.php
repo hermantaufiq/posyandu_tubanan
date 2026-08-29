@@ -20,35 +20,54 @@ class AdminController extends Controller
         $totalKader    = User::role('kader')->count();
         $totalPosyandu = Posyandu::count();
 
-        $bulanSekarang = date('F'); // Default to month name, assuming frontend uses month name or we can just use numeric if PWS uses it. Let's use numeric month as PWS usually stores it or maybe 'Agustus'? 
-        // Wait, earlier I saw $table->string('bulan', 20); // misal "Juli" atau "07". Let's get all PWS for current month/year.
-        // I will just get all PWS data for the current year/month to be safe.
-        // The mockups show "Bulan Agustus 2026". I will use the PHP date('m') and date('Y').
-        $currentMonth = date('m');
-        $currentYear = date('Y');
-        
-        // PWS Data this month
-        // We might not know exact format of 'bulan' in DB. Some use '08', some use 'Agustus'.
-        // To be robust, let's just fetch all LaporanPws for current year and filter.
-        $laporanPws = LaporanPws::where('tahun', $currentYear)->get();
-        // filter for this month, assuming bulan is either numeric or name. For now let's just sum all for the year to avoid empty dashboard if format mismatches, or just use current month if it matches.
-        // Actually, let's just sum everything for the KPI if we want overall, but mockup says "Bulan Agustus 2026".
-        // Let's just sum all available PWS data to ensure dashboard has data.
+        // Ambil semua data PWS untuk dihitung
+        $laporanPwsAll = LaporanPws::all();
         
         $totals = ['bumil' => 0, 'balita' => 0, 'remaja' => 0, 'dewasa' => 0, 'lansia' => 0];
         $posyanduSudahUpdate = [];
         
-        foreach($laporanPws as $lap) {
+        // Buat struktur tren sasaran per bulan
+        $trendData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthDate = now()->subMonths($i);
+            $monthName = $this->getIndonesianMonth($monthDate->format('n')); // "Agustus"
+            $year = $monthDate->format('Y');
+            $key = $monthName . ' ' . $year;
+            $trendData[$key] = ['bulan' => $monthDate->format('M Y'), 'total' => 0];
+        }
+
+        foreach($laporanPwsAll as $lap) {
             $data = is_string($lap->data) ? json_decode($lap->data, true) : $lap->data;
             if (!is_array($data)) continue;
             
-            $posyanduSudahUpdate[] = $lap->posyandu_id;
-            
-            $totals['bumil'] += intval($data['SASARAN_BUMIL'] ?? 0);
-            $totals['balita'] += intval($data['SASARAN_BAYI'] ?? 0) + intval($data['SASARAN_BALITA_APRAS'] ?? 0);
-            $totals['remaja'] += intval($data['SASARAN_6_14'] ?? 0) + intval($data['SASARAN_15_18'] ?? 0);
-            $totals['dewasa'] += intval($data['SASARAN_DEWASA'] ?? 0);
-            $totals['lansia'] += intval($data['SASARAN_LANSIA'] ?? 0);
+            // Hitung total sasaran untuk record ini
+            $sumRecord = intval($data['SASARAN_BUMIL'] ?? 0)
+                       + intval($data['SASARAN_BAYI'] ?? 0) + intval($data['SASARAN_BALITA_APRAS'] ?? 0)
+                       + intval($data['SASARAN_6_14'] ?? 0) + intval($data['SASARAN_15_18'] ?? 0)
+                       + intval($data['SASARAN_DEWASA'] ?? 0)
+                       + intval($data['SASARAN_LANSIA'] ?? 0);
+
+            // Tambahkan ke tren jika masuk dalam 6 bulan terakhir
+            $lapKey = ucfirst(strtolower($lap->bulan)) . ' ' . $lap->tahun;
+            // Also try to match numeric month if they saved it as numeric
+            if (is_numeric($lap->bulan)) {
+                 $lapKey = $this->getIndonesianMonth((int)$lap->bulan) . ' ' . $lap->tahun;
+            }
+
+            if (isset($trendData[$lapKey])) {
+                $trendData[$lapKey]['total'] += $sumRecord;
+            }
+
+            // Untuk stat utama, kita hanya pakai data tahun ini
+            if ($lap->tahun == date('Y')) {
+                $posyanduSudahUpdate[] = $lap->posyandu_id;
+                
+                $totals['bumil'] += intval($data['SASARAN_BUMIL'] ?? 0);
+                $totals['balita'] += intval($data['SASARAN_BAYI'] ?? 0) + intval($data['SASARAN_BALITA_APRAS'] ?? 0);
+                $totals['remaja'] += intval($data['SASARAN_6_14'] ?? 0) + intval($data['SASARAN_15_18'] ?? 0);
+                $totals['dewasa'] += intval($data['SASARAN_DEWASA'] ?? 0);
+                $totals['lansia'] += intval($data['SASARAN_LANSIA'] ?? 0);
+            }
         }
         
         $totalSasaran = array_sum($totals);
@@ -73,13 +92,7 @@ class AdminController extends Controller
                 'status' => 'Disetujui'
             ]);
 
-        // Mock 6 months trend
-        $trenSasaran = collect(range(5, 0))->map(function($i) {
-            return [
-                'bulan' => now()->subMonths($i)->format('M Y'),
-                'total' => rand(100, 500) // Dummy trend
-            ];
-        });
+        $trenSasaran = array_values($trendData);
 
         return response()->json([
             'stats' => [
@@ -100,4 +113,15 @@ class AdminController extends Controller
             'tren_sasaran' => $trenSasaran,
         ]);
     }
+
+    private function getIndonesianMonth($numericMonth)
+    {
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+        return $months[$numericMonth] ?? '';
+    }
 }
+

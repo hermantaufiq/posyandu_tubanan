@@ -5,7 +5,6 @@ import MasterKegiatanPage from './pages/MasterKegiatanPage';
 import RekapSasaranPage from './pages/RekapSasaranPage';
 import UsersPage from './pages/UsersPage';
 import LaporanPage from './pages/LaporanPage';
-import LaporanKaderPage from './pages/LaporanKaderPage';
 import PosyanduPage from './pages/PosyanduPage';
 import PengaturanPage from './pages/PengaturanPage';
 import PengumumanPage from './pages/PengumumanPage';
@@ -34,6 +33,12 @@ function RequireAuth({ children }: { children: React.ReactElement }) {
 
 import PwaInstallBanner from './components/PwaInstallBanner';
 
+import ProfilDesaPage from './pages/ProfilDesaPage';
+import SkPosyanduPage from './pages/SkPosyanduPage';
+import LaporanSpmPage from './pages/LaporanSpmPage';
+import VerifikasiPage from './pages/VerifikasiPage';
+import InsentifPage from './pages/InsentifPage';
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -47,10 +52,16 @@ export default function App() {
             <Route path="rekap-sasaran" element={<RekapSasaranPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="laporan" element={<LaporanPage />} />
-            <Route path="laporan-kader" element={<LaporanKaderPage />} />
             <Route path="posyandu" element={<PosyanduPage />} />
             <Route path="pengaturan" element={<PengaturanPage />} />
             <Route path="pengumuman" element={<PengumumanPage />} />
+            
+            {/* New Routes */}
+            <Route path="profil-desa" element={<ProfilDesaPage />} />
+            <Route path="sk-posyandu" element={<SkPosyanduPage />} />
+            <Route path="laporan-spm" element={<LaporanSpmPage />} />
+            <Route path="verifikasi" element={<VerifikasiPage />} />
+            <Route path="insentif" element={<InsentifPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

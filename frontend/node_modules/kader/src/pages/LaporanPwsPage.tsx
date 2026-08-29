@@ -18,11 +18,12 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
       title: "REKAP SASARAN",
       color: "blue",
       fields: [
-        { key: "SASARAN_BAYI",    label: "Sasaran Bayi (0-11 bln)" },
-        { key: "SASARAN_BALITA",  label: "Sasaran Balita (12-59 bln)" },
-        { key: "SASARAN_APRAS",   label: "Sasaran Apras (60-71 bln)" },
-        { key: "DATANG",          label: "Datang / Hadir" },
-        { key: "TIDAK_DATANG",    label: "Tidak Datang" },
+        { key: "SASARAN_BAYI",              label: "Sasaran Bayi (0-11 bln)" },
+        { key: "SASARAN_BALITA_APRAS",      label: "Sasaran Balita + Apras (12-71 bln)" },
+        { key: "DATANG_BALITA",             label: "Hadir / Datang Balita" },
+        { key: "DATANG_APRAS",              label: "Hadir / Datang Apras" },
+        { key: "TIDAK_DATANG_BAYI",         label: "Tidak Datang Bayi" },
+        { key: "TIDAK_DATANG_APRAS",        label: "Tidak Datang Apras" },
       ]
     },
     {
@@ -68,18 +69,15 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
     },
   ],
 
-  // ─── BUKU 2: IBU HAMIL, NIFAS & MENYUSUI ───────────────────────────────────
-  "Ibu Hamil, Nifas & Menyusui": [
+  // ─── BUKU 2: IBU HAMIL ───────────────────────────────────
+  "Ibu Hamil": [
     {
       title: "REKAP SASARAN",
       color: "rose",
       fields: [
         { key: "SASARAN_BUMIL",  label: "Sasaran Ibu Hamil (Bumil)" },
-        { key: "SASARAN_BUFAS",  label: "Sasaran Ibu Nifas (Bufas)" },
-        { key: "SASARAN_BUSUI",  label: "Sasaran Ibu Menyusui (Busui)" },
         { key: "DATANG_BUMIL",   label: "Bumil Datang" },
-        { key: "DATANG_BUFAS",   label: "Bufas/Busui Datang" },
-        { key: "TIDAK_DATANG",   label: "Total Tidak Datang" },
+        { key: "TIDAK_DATANG",   label: "Bumil Tidak Datang" },
       ]
     },
     {
@@ -122,7 +120,6 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
       fields: [
         { key: "PMT_BUMIL",        label: "Ibu Hamil Dapat PMT" },
         { key: "BUMIL_KELAS",      label: "Ikut Kelas Ibu Hamil" },
-        { key: "VITAMIN_A_BUFAS",  label: "Bufas Dapat Vitamin A" },
         { key: "IMUNISASI_TT",     label: "Imunisasi TT (Tetanus)" },
         { key: "EDUKASI",          label: "Mendapat Edukasi" },
       ]
@@ -180,23 +177,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
         { key: "GD_TINGGI",  label: "Tinggi" },
       ]
     },
-    {
-      title: "REMAJA PUTRI (≥15 Tahun)",
-      color: "cyan",
-      fields: [
-        { key: "REMTRI_ANEMIA",    label: "Terdeteksi Anemia" },
-        { key: "REMTRI_TDK_ANEMIA",label: "Tidak Anemia" },
-      ]
-    },
-    {
-      title: "SKRINING LAINNYA",
-      color: "emerald",
-      fields: [
-        { key: "TBC_GEJALA",   label: "Bergejala TBC" },
-        { key: "EDUKASI",      label: "Mendapat Edukasi" },
-        { key: "DIRUJUK",      label: "Dirujuk ke Fasilitas" },
-      ]
-    },
+
   ],
 
   // ─── BUKU 4: USIA DEWASA ──────────────────────────────────────────
@@ -248,15 +229,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
         { key: "GD_TINGGI",   label: "Tinggi" },
       ]
     },
-    {
-      title: "SKRINING PUMA / PPOK (Paru)",
-      color: "indigo",
-      fields: [
-        { key: "PUMA_KAT_A",   label: "Kategori A (Normal)" },
-        { key: "PUMA_KAT_B",   label: "Kategori B" },
-        { key: "PUMA_KAT_C",   label: "Kategori C" },
-      ]
-    },
+
     {
       title: "EDUKASI",
       color: "indigo",
@@ -297,16 +270,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
         { key: "TIDAK_ASI",        label: "Tidak Menyusui" },
       ]
     },
-    {
-      title: "LAYANAN YANG DITERIMA",
-      color: "cyan",
-      fields: [
-        { key: "PMT_BUSUI",       label: "Mendapat PMT Busui" },
-        { key: "VITAMIN_A",       label: "Mendapat Vitamin A" },
-        { key: "KONSELING_LAKTASI", label: "Konseling Laktasi / Menyusui" },
-        { key: "EDUKASI",         label: "Mendapat Edukasi Gizi" },
-      ]
-    },
+
     {
       title: "TEKANAN DARAH",
       color: "violet",
@@ -358,15 +322,7 @@ const PWS_CONFIG: Record<string, {title: string, color: GroupColor, fields: {key
         { key: "GD_TINGGI",   label: "Tinggi / DM (T)" },
       ]
     },
-    {
-      title: "SKRINING PUMA / PPOK (Paru)",
-      color: "indigo",
-      fields: [
-        { key: "PUMA_KAT_A",   label: "Kategori A (Normal)" },
-        { key: "PUMA_KAT_B",   label: "Kategori B" },
-        { key: "PUMA_KAT_C",   label: "Kategori C" },
-      ]
-    },
+
     {
       title: "EDUKASI LANSIA",
       color: "cyan",

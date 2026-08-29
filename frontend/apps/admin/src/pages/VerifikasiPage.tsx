@@ -169,9 +169,9 @@ export default function LaporanKaderPage() {
               <div key={f.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none overflow-hidden flex flex-col group">
                 <div 
                   className="relative h-48 bg-slate-100 cursor-pointer overflow-hidden"
-                  onClick={() => setSelectedFoto(`http://localhost:8000/storage/${f.file_path}`)}
+                  onClick={() => setSelectedFoto(`${import.meta.env.VITE_API_URL.replace('/api', '')}/storage/${f.file_path}`)}
                 >
-                  <img src={`http://localhost:8000/storage/${f.file_path}`} alt="Laporan" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={`${import.meta.env.VITE_API_URL.replace('/api', '')}/storage/${f.file_path}`} alt="Laporan" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                     <Maximize2 className="text-white opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 drop-shadow-md" />
                   </div>

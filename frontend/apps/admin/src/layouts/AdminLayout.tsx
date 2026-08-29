@@ -29,7 +29,7 @@ const NAV_GROUPS = [
     title: 'Kegiatan',
     items: [
       { to: '/master-kegiatan',   label: 'Master Kegiatan',         icon: CalendarDays },
-      { to: '/verifikasi',        label: 'Verifikasi Laporan',      icon: FileBarChart, badge: '1' },
+      { to: '/verifikasi',        label: 'Verifikasi Laporan PWS & Foto', icon: FileBarChart, badge: '1' },
     ]
   },
   {
@@ -44,8 +44,7 @@ const NAV_GROUPS = [
       { to: '/pengaturan',        label: 'Pengaturan',              icon: Settings },
       { to: '/users',             label: 'Pengguna',                icon: Users },
       { to: '/pengumuman',        label: 'Pengumuman',              icon: Megaphone },
-      { to: '/laporan',           label: 'Laporan Umum',            icon: FileBarChart },
-      { to: '/laporan-kader',     label: 'Laporan Kader (Lama)',    icon: FileBarChart },
+      { to: '/laporan',           label: 'Laporan Antrian',         icon: FileBarChart },
     ]
   }
 ];
