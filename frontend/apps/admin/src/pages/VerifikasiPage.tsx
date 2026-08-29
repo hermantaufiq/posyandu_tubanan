@@ -3,6 +3,31 @@ import { Image as ImageIcon, FileSpreadsheet, CheckCircle2, Activity, CalendarDa
 import api from "../lib/api";
 import { Download, Printer } from "lucide-react";
 
+// --- KAMUS INDIKATOR PWS (Agar tidak disingkat) ---
+const PWS_LABELS: Record<string, string> = {
+  SASARAN_BAYI: "Sasaran Bayi (0-11 bln)", SASARAN_BALITA_APRAS: "Sasaran Balita (12-71 bln)",
+  DATANG_BALITA: "Hadir Balita", DATANG_APRAS: "Hadir Apras", TIDAK_DATANG_BAYI: "Tidak Hadir Bayi", TIDAK_DATANG_APRAS: "Tidak Hadir Apras",
+  BBU_SK: "BB/U Sangat Kurang", BBU_K: "BB/U Kurang", BBU_N: "BB/U Normal", BBU_L: "BB/U Lebih",
+  PBTBU_SP: "PB/TB/U Sangat Pendek", PBTBU_P: "PB/TB/U Pendek", PBTBU_N: "PB/TB/U Normal", PBTBU_T: "PB/TB/U Tinggi",
+  BBPB_GBU: "BB/PB Gizi Buruk", BBPB_GK: "BB/PB Gizi Kurang", BBPB_GB: "BB/PB Gizi Baik", BBPB_BGL: "BB/PB Risiko Gizi Lebih", BBPB_GL: "BB/PB Gizi Lebih", BBPB_OB: "BB/PB Obesitas",
+  IMUNISASI_DASAR: "Imunisasi Dasar", VITAMIN_A: "Dapat Vitamin A", OBAT_CACING: "Dapat Obat Cacing",
+  SASARAN_BUMIL: "Sasaran Bumil", DATANG_BUMIL: "Bumil Hadir", TIDAK_DATANG: "Tidak Hadir", BB_NAIK: "BB Naik", BB_TIDAK: "BB Tidak Naik",
+  LILA_H: "LILA Hijau", LILA_K: "LILA Kuning", LILA_M_KEK: "LILA Merah (KEK)", TD_R: "TD Rendah", TD_N: "TD Normal", TD_T: "TD Tinggi",
+  TTD_SETIAP_HARI: "TTD Tiap Hari", TTD_TIDAK: "TTD Tidak Konsumsi", PMT_BUMIL: "Bumil Dapat PMT", BUMIL_KELAS: "Ikut Kelas Bumil", IMUNISASI_TT: "Imunisasi TT", EDUKASI: "Dapat Edukasi",
+  SASARAN_6_14: "Sasaran 6-14 Thn", SASARAN_15_18: "Sasaran 15-18 Thn", DATANG_6_14: "Hadir 6-14 Thn", DATANG_15_18: "Hadir 15-18 Thn", TIDAK_DATANG_6_14: "Tidak Hadir 6-14 Thn", TIDAK_DATANG_15_18: "Tidak Hadir 15-18 Thn",
+  IMT_SK: "IMT Sangat Kurus", IMT_K: "IMT Kurus", IMT_N: "IMT Normal", IMT_G: "IMT Gemuk", IMT_OB: "IMT Obesitas", LP_P80: "Lingkar Perut >80cm", LP_L90: "Lingkar Perut >90cm",
+  TD_RENDAH: "TD Rendah", TD_NORMAL: "TD Normal", TD_TINGGI: "TD Tinggi", GD_RENDAH: "Gula Darah Rendah", GD_NORMAL: "Gula Darah Normal", GD_TINGGI: "Gula Darah Tinggi",
+  SASARAN_DEWASA: "Sasaran Dewasa", DATANG_DEWASA: "Dewasa Hadir", LP_PEMERIKSAAN: "Diperiksa Lingkar Perut", EDUKASI_CERDIK: "Edukasi CERDIK", EDUKASI_KB: "Edukasi KB", EDUKASI_PTM: "Edukasi PTM", DIRUJUK: "Dirujuk ke Faskes",
+  SASARAN_BUSUI: "Sasaran Ibu Menyusui", DATANG_BUSUI: "Busui Hadir", LILA_NORMAL: "LILA Normal", LILA_KEK: "LILA KEK", ASI_EKSKLUSIF: "ASI Eksklusif", ASI_LANJUTAN: "ASI Lanjutan", TIDAK_ASI: "Tidak Menyusui",
+  SASARAN_LANSIA: "Sasaran Lansia", DATANG_LANSIA: "Lansia Hadir", EDUKASI_GERMAS: "Edukasi GERMAS", EDUKASI_GIZI: "Edukasi Gizi", EDUKASI_JATUH: "Edukasi Pencegahan Jatuh",
+  KONSELING_LAKTASI: "Konseling Laktasi", PMT_BUSUI: "Dapat PMT Busui"
+};
+
+function formatPwsKey(key: string): string {
+  if (PWS_LABELS[key]) return PWS_LABELS[key];
+  return key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+
 export default function LaporanKaderPage() {
   const [activeTab, setActiveTab] = useState<'pws' | 'foto'>('pws');
   const [laporan, setLaporan] = useState<{fotos: any[], pws: any[]}>({ fotos: [], pws: [] });
@@ -140,11 +165,16 @@ export default function LaporanKaderPage() {
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium align-top">{p.kategori_sasaran}</td>
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400 align-top">{p.kader?.name}</td>
                       <td className="px-6 py-4 align-top max-w-md">
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 rounded-xl shadow-sm">
                           {Object.entries(p.data || {}).map(([key, val]) => (
-                            <span key={key} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300">
-                              <span className="font-black text-slate-800 dark:text-slate-100">{key}:</span> {String(val)}
-                            </span>
+                            <div key={key} className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-1 last:border-0">
+                              <span className="text-slate-500 dark:text-slate-400 font-medium text-xs">
+                                {formatPwsKey(key)}
+                              </span>
+                              <span className="font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">
+                                {String(val)}
+                              </span>
+                            </div>
                           ))}
                         </div>
                       </td>
