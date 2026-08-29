@@ -4,8 +4,8 @@ import axios from 'axios';
 const cache = new Map();
 
 const api = axios.create({
-  baseURL: 'https://mean-rabbit-89.loca.lt/api',
-  headers: { "Bypass-Tunnel-Reminder": "true", 'Content-Type': 'application/json', Accept: 'application/json' },
+  baseURL: 'https://parabola-feminism-elective.ngrok-free.dev/api',
+  headers: { "Bypass-Tunnel-Reminder": "true", "ngrok-skip-browser-warning": "true", 'Content-Type': 'application/json', Accept: 'application/json' },
 });
 
 api.interceptors.request.use(cfg => {
