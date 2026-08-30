@@ -272,6 +272,7 @@ export default function DashboardKader() {
                     <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400 text-right">Status</th>
                   </tr>
                 </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {combinedRiwayat.map((item: any) => {
                     if (item._type === 'foto') {
                       return (
