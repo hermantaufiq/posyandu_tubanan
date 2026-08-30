@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Download, ArrowRight, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
+import api from "../lib/api";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line
@@ -33,6 +35,30 @@ const MOCK_TREND = [
 export default function LaporanSpmPage() {
   const [selectedBulan, setSelectedBulan] = useState("");
   const [selectedTahun, setSelectedTahun] = useState("");
+  const [laporan, setLaporan] = useState<{fotos: any[], pws: any[]}>({ fotos: [], pws: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    api.get("/admin/laporan-kader")
+      .then(res => {
+        setLaporan({
+          fotos: res.data.fotos || [],
+          pws: res.data.pws || []
+        });
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const allReports = [...laporan.fotos, ...laporan.pws];
+  const totalLaporan = allReports.length;
+  const totalSelesai = allReports.filter(r => r.status === 'terverifikasi').length;
+  const totalPending = allReports.filter(r => r.status === 'menunggu_verifikasi').length;
+
+  const getPosyanduTotal = (name: string) => {
+    return allReports.filter(r => r.posyandu?.name?.toUpperCase().includes(name.toUpperCase())).length;
+  };
 
   return (
     <div className="p-8 pb-24 font-sans text-slate-800 dark:text-slate-200 max-w-7xl mx-auto">
@@ -56,15 +82,15 @@ export default function LaporanSpmPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
           <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2">Total Laporan</p>
-          <p className="text-4xl font-black">0</p>
+          <p className="text-4xl font-black">{loading ? "..." : totalLaporan}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
           <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2">Selesai Ditindaklanjuti</p>
-          <p className="text-4xl font-black">0</p>
+          <p className="text-4xl font-black text-emerald-600 dark:text-emerald-400">{loading ? "..." : totalSelesai}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
           <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2">Belum Ditindaklanjuti (Pending)</p>
-          <p className="text-4xl font-black">0</p>
+          <p className="text-4xl font-black text-amber-500 dark:text-amber-400">{loading ? "..." : totalPending}</p>
         </div>
       </div>
 
@@ -175,17 +201,20 @@ export default function LaporanSpmPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {MOCK_POSYANDU.map((pos) => (
-                <tr key={pos.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{pos.name}</td>
-                  <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{pos.total} Laporan</td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-blue-600 dark:text-blue-400 font-bold hover:text-blue-700 dark:hover:text-blue-300 transition-colors inline-flex items-center gap-1 text-sm">
-                      Lihat Laporan <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {MOCK_POSYANDU.map((pos) => {
+                const total = getPosyanduTotal(pos.name);
+                return (
+                  <tr key={pos.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{pos.name}</td>
+                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{loading ? "..." : total} Laporan</td>
+                    <td className="px-6 py-4 text-right">
+                      <Link to="/verifikasi" className="text-blue-600 dark:text-blue-400 font-bold hover:text-blue-700 dark:hover:text-blue-300 transition-colors inline-flex items-center gap-1 text-sm">
+                        Lihat Laporan <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
