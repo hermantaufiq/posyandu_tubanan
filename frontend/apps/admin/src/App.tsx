@@ -37,7 +37,6 @@ import ProfilDesaPage from './pages/ProfilDesaPage';
 import SkPosyanduPage from './pages/SkPosyanduPage';
 import LaporanSpmPage from './pages/LaporanSpmPage';
 import VerifikasiPage from './pages/VerifikasiPage';
-import InsentifPage from './pages/InsentifPage';
 
 export default function App() {
   return (
@@ -61,7 +60,6 @@ export default function App() {
             <Route path="sk-posyandu" element={<SkPosyanduPage />} />
             <Route path="laporan-spm" element={<LaporanSpmPage />} />
             <Route path="verifikasi" element={<VerifikasiPage />} />
-            <Route path="insentif" element={<InsentifPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

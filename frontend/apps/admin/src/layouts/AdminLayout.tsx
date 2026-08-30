@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, CalendarDays, Users, FileBarChart, MapPin,
@@ -8,64 +8,55 @@ import {
 import { useTheme } from '../components/ThemeContext';
 import api from '../lib/api';
 
-const NAV_GROUPS = [
-  {
-    title: '',
-    items: [
-      { to: '/',            label: 'Dashboard',   icon: LayoutDashboard },
-      { to: '/profil-desa', label: 'Profil Desa', icon: MapPin },
-      { to: '/sk-posyandu', label: 'SK TP Posyandu',icon: FileBarChart },
-    ]
-  },
-  {
-    title: 'Laporan & Statistik',
-    items: [
-      { to: '/posyandu',          label: 'Rekap Posyandu',          icon: Users },
-      { to: '/rekap-sasaran',     label: 'Rekap Sasaran Kesehatan', icon: FileBarChart },
-      { to: '/laporan-spm',       label: 'Rekap Laporan SPM',       icon: FileBarChart },
-    ]
-  },
-  {
-    title: 'Kegiatan',
-    items: [
-      { to: '/master-kegiatan',   label: 'Master Kegiatan',         icon: CalendarDays },
-      { to: '/verifikasi',        label: 'Verifikasi Laporan PWS & Foto', icon: FileBarChart, badge: '1' },
-    ]
-  },
-  {
-    title: 'Insentif',
-    items: [
-      { to: '/insentif',          label: 'Pembayaran Insentif',     icon: Settings, badge: '5' },
-    ]
-  },
-  {
-    title: 'Pengaturan Umum',
-    items: [
-      { to: '/pengaturan',        label: 'Pengaturan',              icon: Settings },
-      { to: '/users',             label: 'Pengguna',                icon: Users },
-      { to: '/pengumuman',        label: 'Pengumuman',              icon: Megaphone },
-      { to: '/laporan',           label: 'Laporan Antrian',         icon: FileBarChart },
-    ]
-  }
-];
-
-const PREFETCH_MAP: Record<string, string[]> = {
-  '/': ['/admin/dashboard'],
-  '/pengumuman': ['/admin/pengumuman'],
-  '/master-kegiatan': ['/admin/jadwal', '/admin/posyandus'],
-  '/users': ['/admin/users'],
-  '/laporan-kader': ['/admin/laporan-kader'],
-  '/laporan': ['/admin/laporan/antrian', '/admin/laporan/pemeriksaan'],
-  '/posyandu': ['/admin/posyandu'],
-  '/pengaturan': ['/admin/invite-codes'],
-  '/rekap-sasaran': ['/admin/laporan/rekap-sasaran'],
-};
-
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('admin_auth_user') || '{}');
   const { theme, toggleTheme } = useTheme();
+  const [unverifiedCount, setUnverifiedCount] = useState(0);
+
+  useEffect(() => {
+    api.get('/admin/laporan-kader').then(res => {
+      const { fotos = [], pws = [] } = res.data;
+      const count = [...fotos, ...pws].filter(r => r.status === 'menunggu_verifikasi').length;
+      setUnverifiedCount(count);
+    }).catch(() => {});
+  }, [location.pathname]);
+
+  const NAV_GROUPS = [
+    {
+      title: '',
+      items: [
+        { to: '/',            label: 'Dashboard',   icon: LayoutDashboard },
+        { to: '/profil-desa', label: 'Profil Desa', icon: MapPin },
+        { to: '/sk-posyandu', label: 'SK TP Posyandu',icon: FileBarChart },
+      ]
+    },
+    {
+      title: 'Laporan & Statistik',
+      items: [
+        { to: '/posyandu',          label: 'Rekap Posyandu',          icon: Users },
+        { to: '/rekap-sasaran',     label: 'Rekap Sasaran Kesehatan', icon: FileBarChart },
+        { to: '/laporan-spm',       label: 'Rekap Laporan SPM',       icon: FileBarChart },
+      ]
+    },
+    {
+      title: 'Kegiatan',
+      items: [
+        { to: '/master-kegiatan',   label: 'Master Kegiatan',         icon: CalendarDays },
+        { to: '/verifikasi',        label: 'Verifikasi Laporan PWS & Foto', icon: FileBarChart, badge: unverifiedCount > 0 ? unverifiedCount.toString() : null },
+      ]
+    },
+    {
+      title: 'Pengaturan Umum',
+      items: [
+        { to: '/pengaturan',        label: 'Pengaturan',              icon: Settings },
+        { to: '/users',             label: 'Pengguna',                icon: Users },
+        { to: '/pengumuman',        label: 'Pengumuman',              icon: Megaphone },
+        { to: '/laporan',           label: 'Laporan Antrian',         icon: FileBarChart },
+      ]
+    }
+  ];
 
   const logout = () => {
     localStorage.removeItem('admin_auth_token');
