@@ -8,6 +8,18 @@ import {
 import { useTheme } from '../components/ThemeContext';
 import api from '../lib/api';
 
+const PREFETCH_MAP: Record<string, string[]> = {
+  '/': ['/admin/dashboard'],
+  '/pengumuman': ['/admin/pengumuman'],
+  '/master-kegiatan': ['/admin/jadwal', '/admin/posyandus'],
+  '/users': ['/admin/users'],
+  '/laporan-kader': ['/admin/laporan-kader'],
+  '/laporan': ['/admin/laporan/antrian', '/admin/laporan/pemeriksaan'],
+  '/posyandu': ['/admin/posyandu'],
+  '/pengaturan': ['/admin/invite-codes'],
+  '/rekap-sasaran': ['/admin/laporan/rekap-sasaran'],
+};
+
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
