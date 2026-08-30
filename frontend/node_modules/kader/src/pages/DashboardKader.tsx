@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { LogOut, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRight, Sun, Moon, Download, Printer, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
@@ -13,6 +13,16 @@ export default function DashboardKader() {
   const { theme, toggleTheme } = useTheme();
 
   const [loadingRiwayat, setLoadingRiwayat] = useState(false);
+
+  const combinedRiwayat = useMemo(() => {
+    if (!riwayat.fotos && !riwayat.pws) return [];
+    
+    const fotos = (riwayat.fotos || []).map((f: any) => ({ ...f, _type: 'foto' }));
+    const pws = (riwayat.pws || []).map((p: any) => ({ ...p, _type: 'pws' }));
+    
+    // Urutkan dari yang terbaru (descending)
+    return [...fotos, ...pws].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [riwayat]);
 
   useEffect(() => {
     const usr = localStorage.getItem("kader_auth_user");
@@ -262,32 +272,36 @@ export default function DashboardKader() {
                     <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {riwayat.fotos?.map((f: any) => (
-                    <tr key={`f-${f.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(f.created_at).toLocaleDateString('id-ID')}</td>
-                      <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{f.bulan} {f.tahun}</td>
-                      <td className="px-6 py-4"><span className="bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-violet-700 print:bg-transparent">Foto Manual</span></td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{f.kategori}</td>
-                      <td className="px-6 py-4 text-right">
-                        {f.status === 'terverifikasi' 
-                          ? <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Diterima</span>
-                          : <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs"><AlertTriangle className="w-4 h-4"/> Menunggu</span>
-                        }
-                      </td>
-                    </tr>
-                  ))}
-                  {riwayat.pws?.map((p: any) => (
-                    <tr key={`p-${p.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(p.created_at).toLocaleDateString('id-ID')}</td>
-                      <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{p.bulan} {p.tahun}</td>
-                      <td className="px-6 py-4"><span className="bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-blue-700 print:bg-transparent">PWS Digital</span></td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{p.kategori_sasaran}</td>
-                      <td className="px-6 py-4 text-right">
-                        <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Otomatis Rekap</span>
-                      </td>
-                    </tr>
-                  ))}
+                  {combinedRiwayat.map((item: any) => {
+                    if (item._type === 'foto') {
+                      return (
+                        <tr key={`f-${item.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(item.created_at).toLocaleDateString('id-ID')}</td>
+                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{item.bulan} {item.tahun}</td>
+                          <td className="px-6 py-4"><span className="bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-violet-700 print:bg-transparent">Foto Manual</span></td>
+                          <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.kategori}</td>
+                          <td className="px-6 py-4 text-right">
+                            {item.status === 'terverifikasi' 
+                              ? <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Diterima</span>
+                              : <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs"><AlertTriangle className="w-4 h-4"/> Menunggu</span>
+                            }
+                          </td>
+                        </tr>
+                      );
+                    } else {
+                      return (
+                        <tr key={`p-${item.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(item.created_at).toLocaleDateString('id-ID')}</td>
+                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{item.bulan} {item.tahun}</td>
+                          <td className="px-6 py-4"><span className="bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-blue-700 print:bg-transparent">PWS Digital</span></td>
+                          <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.kategori_sasaran}</td>
+                          <td className="px-6 py-4 text-right">
+                            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Otomatis Rekap</span>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  })}
                 </tbody>
               </table>
             )}
