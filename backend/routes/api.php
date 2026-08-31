@@ -1,12 +1,19 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// Healthcheck for Railway
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok', 'timestamp' => now()]);
+});
+
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\AiChatController;
 use App\Http\Controllers\Api\Nakes\RegisterNakesController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
