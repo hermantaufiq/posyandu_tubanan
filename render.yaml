@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: posyandu-tubanan-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: APP_NAME
+        value: "Posyandu Desa Tubanan"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        fromService:
+          type: web
+          name: posyandu-tubanan-api
+          property: host
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: 75.2.106.174
+      - key: DB_PORT
+        value: "4000"
+      - key: DB_DATABASE
+        value: test
+      - key: DB_USERNAME
+        value: 3kZoh3kZGmM4fkD.root
+      - key: DB_PASSWORD
+        value: 1R2GWOCr5gnT3ylc
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: "sipo-admin-mu.vercel.app,sipo-kader.vercel.app,sipo-masyarakat.vercel.app"
+      - key: FILESYSTEM_DISK
+        value: public
