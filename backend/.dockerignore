@@ -9,5 +9,3 @@ storage/framework/sessions/*
 storage/framework/views/*
 bootstrap/cache/*
 *.log
-docker
-Dockerfile
