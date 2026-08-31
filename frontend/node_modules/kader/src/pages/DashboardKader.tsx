@@ -43,7 +43,7 @@ export default function DashboardKader() {
 
       fetchRiwayat();
       // Auto-refresh riwayat setiap 15 detik agar status dari admin langsung terlihat
-      const interval = setInterval(fetchRiwayat, 15000);
+      const interval = setInterval(fetchRiwayat, 1000);
       return () => clearInterval(interval);
     }
   }, [navigate]);

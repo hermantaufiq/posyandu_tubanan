@@ -41,7 +41,7 @@ export default function LaporanKaderPage() {
     fetchData();
     const interval = setInterval(() => {
       fetchData(true);
-    }, 15000);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 

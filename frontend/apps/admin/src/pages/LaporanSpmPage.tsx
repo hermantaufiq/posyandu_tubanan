@@ -55,7 +55,7 @@ export default function LaporanSpmPage() {
     };
 
     fetchData();
-    const interval = setInterval(() => fetchData(true), 15000);
+    const interval = setInterval(() => fetchData(true), 1000);
     return () => clearInterval(interval);
   }, []);
 

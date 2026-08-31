@@ -37,7 +37,7 @@ export default function AdminLayout() {
     };
 
     fetchBadge();
-    const interval = setInterval(fetchBadge, 15000);
+    const interval = setInterval(fetchBadge, 1000);
     return () => clearInterval(interval);
   }, [location.pathname]);
 
