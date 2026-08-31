@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { LogOut, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRight, Sun, Moon, Download, Printer, Users } from "lucide-react";
+import { LogOut, FileSpreadsheet, Camera, CheckCircle2, AlertTriangle, ArrowRight, Sun, Moon, Download, Printer, Users, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import { useTheme } from "../components/ThemeContext";
@@ -34,10 +34,17 @@ export default function DashboardKader() {
       
       // Muat riwayat di latar belakang (tidak memblokir tampilan)
       setLoadingRiwayat(true);
-      api.get("/kader/laporan/riwayat")
-        .then(res => setRiwayat(res.data))
-        .catch(console.error)
-        .finally(() => setLoadingRiwayat(false));
+      const fetchRiwayat = () => {
+        api.get("/kader/laporan/riwayat")
+          .then(res => setRiwayat(res.data))
+          .catch(console.error)
+          .finally(() => setLoadingRiwayat(false));
+      };
+
+      fetchRiwayat();
+      // Auto-refresh riwayat setiap 15 detik agar status dari admin langsung terlihat
+      const interval = setInterval(fetchRiwayat, 15000);
+      return () => clearInterval(interval);
     }
   }, [navigate]);
 
@@ -284,6 +291,8 @@ export default function DashboardKader() {
                           <td className="px-6 py-4 text-right">
                             {item.status === 'terverifikasi' 
                               ? <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Diterima</span>
+                              : item.status === 'ditolak'
+                              ? <span className="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold text-xs"><X className="w-4 h-4"/> Ditolak</span>
                               : <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs"><AlertTriangle className="w-4 h-4"/> Menunggu</span>
                             }
                           </td>
@@ -299,6 +308,8 @@ export default function DashboardKader() {
                           <td className="px-6 py-4 text-right">
                             {item.status === 'terverifikasi' 
                               ? <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs"><CheckCircle2 className="w-4 h-4"/> Diterima</span>
+                              : item.status === 'ditolak'
+                              ? <span className="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold text-xs"><X className="w-4 h-4"/> Ditolak</span>
                               : <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs"><AlertTriangle className="w-4 h-4"/> Menunggu</span>
                             }
                           </td>
