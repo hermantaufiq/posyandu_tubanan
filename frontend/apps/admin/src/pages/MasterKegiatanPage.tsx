@@ -84,10 +84,10 @@ export default function MasterKegiatanPage() {
 
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+        <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-end gap-2">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Cari" className="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+            <input type="text" placeholder="Cari" className="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-full sm:w-auto" />
           </div>
           <button className="flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <Filter className="w-4 h-4" />
@@ -99,11 +99,11 @@ export default function MasterKegiatanPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4 w-12"><input type="checkbox" className="rounded text-blue-600" /></th>
-                <th className="px-6 py-4 cursor-pointer hover:text-slate-900 dark:hover:text-white flex items-center gap-1">Tanggal <span className="text-[10px]">▼</span></th>
-                <th className="px-6 py-4">Kegiatan</th>
-                <th className="px-6 py-4">Deskripsi</th>
-                <th className="px-6 py-4 text-right">Aksi</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm w-10"><input type="checkbox" className="rounded text-blue-600" /></th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Tanggal</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Kegiatan</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm hidden md:table-cell">Deskripsi</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

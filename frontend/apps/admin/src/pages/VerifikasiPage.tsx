@@ -168,21 +168,21 @@ export default function LaporanKaderPage() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
                   <tr>
-                    <th className="px-6 py-4 font-semibold">Bulan</th>
-                    <th className="px-6 py-4 font-semibold">Posyandu</th>
-                    <th className="px-6 py-4 font-semibold">Kategori</th>
-                    <th className="px-6 py-4 font-semibold">Oleh</th>
-                    <th className="px-6 py-4 font-semibold text-left">Data Indikator PWS</th>
-                    <th className="px-6 py-4 font-semibold text-center">Status</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-xs">Bulan</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-xs hidden sm:table-cell">Posyandu</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-xs">Kategori</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-xs hidden md:table-cell">Oleh</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-xs hidden lg:table-cell text-left">Data Indikator PWS</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-xs text-center">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {laporan.pws.map((p) => (
                     <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200 align-top">{p.tanggal ? `${p.tanggal} ` : ''}{p.bulan} {p.tahun}</td>
-                      <td className="px-6 py-4 font-semibold text-blue-700 dark:text-blue-400 align-top">{p.posyandu?.name}</td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium align-top">{p.kategori_sasaran}</td>
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 align-top">{p.kader?.name}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-slate-800 dark:text-slate-200 align-top text-xs sm:text-sm">{p.tanggal ? `${p.tanggal} ` : ''}{p.bulan} {p.tahun}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-blue-700 dark:text-blue-400 align-top text-xs sm:text-sm hidden sm:table-cell">{p.posyandu?.name}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-slate-600 dark:text-slate-400 font-medium align-top text-xs sm:text-sm">{p.kategori_sasaran}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-slate-500 dark:text-slate-400 align-top text-xs sm:text-sm hidden md:table-cell">{p.kader?.name}</td>
                       <td className="px-6 py-4 align-top">
                         <button 
                           onClick={() => setSelectedPwsData({

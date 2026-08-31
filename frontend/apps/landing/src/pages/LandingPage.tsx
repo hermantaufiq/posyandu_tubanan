@@ -38,7 +38,7 @@ export default function LandingPage() {
 
       {/* Navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/70 backdrop-blur-md">
-        <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/logo.png" alt="SIPO Logo" className="w-8 h-8 object-contain" />
             <div>
@@ -74,7 +74,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl leading-[1.1]"
+            className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl leading-[1.1]"
           >
             Layanan Kesehatan Digital{' '}
             <br className="hidden md:block" />
@@ -309,7 +309,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 rounded-3xl p-10 md:p-14 text-center relative overflow-hidden"
+              className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 rounded-2xl sm:rounded-3xl p-7 sm:p-14 text-center relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
               <div className="relative z-10">
@@ -333,7 +333,7 @@ export default function LandingPage() {
         {/* ─── Footer ─── */}
         <footer id="kontak" className="bg-slate-900 text-slate-400 py-12">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 border-b border-slate-800 pb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12 border-b border-slate-800 pb-12">
               <div className="md:col-span-1">
                 <div className="flex items-center gap-2 mb-4">
                   <img src="/logo.png" alt="SIPO Logo" className="w-8 h-8 object-contain" />

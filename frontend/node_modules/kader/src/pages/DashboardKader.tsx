@@ -87,27 +87,27 @@ export default function DashboardKader() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans pb-24 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 sticky top-0 z-50 flex items-center justify-between shadow-sm dark:shadow-none">
-        <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="SIPO Logo" className="w-12 h-12 object-contain" />
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-50 flex items-center justify-between shadow-sm dark:shadow-none">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <img src="/logo.png" alt="SIPO Logo" className="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
           <div>
-            <h1 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">SIPO-Terpadu Tubanan</h1>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            <h1 className="text-base sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">SIPO-Terpadu Tubanan</h1>
+            <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 truncate max-w-[150px] sm:max-w-none">
               {user?.name} &bull; {user?.posyandu?.name ?? "Posyandu Tubanan"}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <button onClick={toggleTheme} className="p-2 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
-          <button onClick={handleLogout} className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-semibold text-sm transition-colors px-4 py-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl">
-            Keluar <LogOut className="w-4 h-4" />
+          <button onClick={handleLogout} className="flex items-center gap-1 sm:gap-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-semibold text-xs sm:text-sm transition-colors px-2 sm:px-4 py-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl">
+            <span className="hidden sm:inline">Keluar</span> <LogOut className="w-4 h-4" />
           </button>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto p-6 mt-6">
+      <main className="max-w-5xl mx-auto p-4 sm:p-6 mt-4 sm:mt-6">
         
         {/* Banner Sapaan */}
         <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 sm:p-8 text-white shadow-lg shadow-emerald-200/50 mb-8 flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -192,7 +192,7 @@ export default function DashboardKader() {
         })()}
 
         {/* Navigator Menu */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           
           {/* Card 0: Pelaksanaan Posyandu */}
           <Link to="/pelaksanaan" className="group bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-slate-100 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl hover:shadow-blue-100 dark:hover:shadow-blue-900/20 transition-all cursor-pointer relative overflow-hidden flex flex-col h-full">

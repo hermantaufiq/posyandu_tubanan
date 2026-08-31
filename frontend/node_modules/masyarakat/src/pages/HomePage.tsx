@@ -35,7 +35,7 @@ export default function HomePage() {
   const isSasaran = (user?.kategori_warga || 'sasaran') === 'sasaran';
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
 
       {/* ══════════════════════════════════════════
           HERO BANNER — Beda tema Sasaran vs Pengunjung
@@ -43,7 +43,7 @@ export default function HomePage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden"
+        className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-lg relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20" />
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -59,7 +59,7 @@ export default function HomePage() {
             <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-3">
               <span className="text-2xl font-bold">{user?.name?.charAt(0) || 'U'}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-1">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1">
               {isSasaran
                 ? `Selamat Datang, ${user?.name?.split(' ')[0] || 'Warga'}! 👋`
                 : `Selamat Berkunjung, ${user?.name?.split(' ')[0] || 'Tamu'}! 🤝`

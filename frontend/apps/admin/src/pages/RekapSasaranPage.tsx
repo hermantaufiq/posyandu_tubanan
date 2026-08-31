@@ -183,12 +183,12 @@ export default function RekapSasaranPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4">Nama Posyandu</th>
-                <th className="px-6 py-4 text-center">Bumil</th>
-                <th className="px-6 py-4 text-center">Balita</th>
-                <th className="px-6 py-4 text-center">Remaja</th>
-                <th className="px-6 py-4 text-center">Dewasa</th>
-                <th className="px-6 py-4 text-center">Lansia</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Nama Posyandu</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-center">Bumil</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-center">Balita</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-center hidden sm:table-cell">Remaja</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-center hidden sm:table-cell">Dewasa</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-center">Lansia</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

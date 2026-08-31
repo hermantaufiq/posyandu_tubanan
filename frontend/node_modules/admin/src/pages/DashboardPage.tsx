@@ -32,7 +32,7 @@ export default function DashboardPage() {
     <div className="space-y-6 max-w-7xl mx-auto text-slate-800 dark:text-slate-200">
       
       {/* Welcome Bar */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm flex items-center justify-between">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 sm:p-6 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Selamat Datang</h2>
           <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mt-1">TUBANAN</p>
@@ -140,10 +140,10 @@ export default function DashboardPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4">Nama Kegiatan</th>
-                <th className="px-6 py-4">Posyandu</th>
-                <th className="px-6 py-4">Tanggal <span>▼</span></th>
-                <th className="px-6 py-4">Status <span>▼</span></th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Nama Kegiatan</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm hidden sm:table-cell">Posyandu</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Tanggal <span>▼</span></th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Status <span>▼</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -183,10 +183,10 @@ export default function DashboardPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4">Nama Posyandu</th>
-                <th className="px-6 py-4">Desa/Kelurahan</th>
-                <th className="px-6 py-4">Kecamatan</th>
-                <th className="px-6 py-4">Terakhir Update</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Nama Posyandu</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm hidden sm:table-cell">Desa/Kelurahan</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm hidden md:table-cell">Kecamatan</th>
+                <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">Terakhir Update</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
