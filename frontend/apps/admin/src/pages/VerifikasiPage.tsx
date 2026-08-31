@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Image as ImageIcon, FileSpreadsheet, CheckCircle2, Activity, CalendarDays, Maximize2, X } from "lucide-react";
+import { Image as ImageIcon, FileSpreadsheet, CheckCircle2, Activity, Maximize2, X } from "lucide-react";
 import api from "../lib/api";
 import { Download, Printer } from "lucide-react";
 
