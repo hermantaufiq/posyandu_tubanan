@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://parabola-feminism-elective.ngrok-free.dev/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://posyandu-tubanan-api-production-6ff3.up.railway.app/api',
   headers: { "Bypass-Tunnel-Reminder": "true", "ngrok-skip-browser-warning": "true",
     'Content-Type': 'application/json',
     'Accept': 'application/json',
