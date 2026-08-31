@@ -278,7 +278,7 @@ export default function DashboardKader() {
                       return (
                         <tr key={`f-${item.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(item.created_at).toLocaleDateString('id-ID')}</td>
-                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{item.bulan} {item.tahun}</td>
+                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{item.tanggal ? `${item.tanggal} ` : ''}{item.bulan} {item.tahun}</td>
                           <td className="px-6 py-4"><span className="bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-violet-700 print:bg-transparent">Foto Manual</span></td>
                           <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.kategori}</td>
                           <td className="px-6 py-4 text-right">
@@ -293,7 +293,7 @@ export default function DashboardKader() {
                       return (
                         <tr key={`p-${item.id}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(item.created_at).toLocaleDateString('id-ID')}</td>
-                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{item.bulan} {item.tahun}</td>
+                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{item.tanggal ? `${item.tanggal} ` : ''}{item.bulan} {item.tahun}</td>
                           <td className="px-6 py-4"><span className="bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-md text-xs font-bold print:border print:border-blue-700 print:bg-transparent">PWS Digital</span></td>
                           <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{item.kategori_sasaran}</td>
                           <td className="px-6 py-4 text-right">

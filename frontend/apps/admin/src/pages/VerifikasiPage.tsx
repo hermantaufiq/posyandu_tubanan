@@ -174,7 +174,7 @@ export default function LaporanKaderPage() {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {laporan.pws.map((p) => (
                     <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200 align-top">{p.bulan} {p.tahun}</td>
+                      <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200 align-top">{p.tanggal ? `${p.tanggal} ` : ''}{p.bulan} {p.tahun}</td>
                       <td className="px-6 py-4 font-semibold text-blue-700 dark:text-blue-400 align-top">{p.posyandu?.name}</td>
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium align-top">{p.kategori_sasaran}</td>
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400 align-top">{p.kader?.name}</td>
@@ -252,11 +252,14 @@ export default function LaporanKaderPage() {
                   )}
                 </div>
                 <div className="p-6 flex-1 flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                      <CalendarDays className="w-4 h-4" /> {f.bulan} {f.tahun}
-                    </span>
-                    <span className="text-xs font-bold text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-500/10 px-2 py-1 rounded-md">{f.kategori}</span>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex gap-2 items-center">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-violet-50 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 text-xs font-bold ring-1 ring-inset ring-violet-600/20">
+                        Foto Manual
+                      </div>
+                      <span className="text-xs font-bold text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-500/10 px-2 py-1 rounded-md">{f.kategori}</span>
+                    </div>
+                    <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{f.tanggal ? `${f.tanggal} ` : ''}{f.bulan} {f.tahun}</span>
                   </div>
                   <h3 className="font-bold text-slate-800 dark:text-slate-200 text-lg">{f.posyandu?.name}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Oleh: {f.kader?.name}</p>

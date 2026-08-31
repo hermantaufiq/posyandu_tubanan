@@ -17,6 +17,7 @@ export default function UploadFotoPage() {
 
   const [form, setForm] = useState({
     kategori: "Langkah 1",
+    tanggal: new Date().getDate(),
     bulan: new Date().toLocaleString('id-ID', { month: 'long' }),
     tahun: new Date().getFullYear(),
     catatan: "",
@@ -86,6 +87,7 @@ export default function UploadFotoPage() {
     try {
       const formData = new FormData();
       formData.append("kategori", form.kategori);
+      formData.append("tanggal", form.tanggal.toString());
       formData.append("bulan", form.bulan.toString());
       formData.append("tahun", form.tahun.toString());
       formData.append("catatan", form.catatan);
@@ -146,7 +148,17 @@ export default function UploadFotoPage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Tanggal</label>
+                  <input 
+                    type="number" 
+                    min="1" max="31"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium text-slate-700 dark:text-slate-200 focus:border-violet-500 focus:ring-violet-500 outline-none"
+                    value={form.tanggal}
+                    onChange={(e) => setForm({...form, tanggal: parseInt(e.target.value) || 1})}
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Bulan</label>
                   <select 
@@ -165,7 +177,7 @@ export default function UploadFotoPage() {
                     type="number" 
                     className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium text-slate-700 dark:text-slate-200 focus:border-violet-500 focus:ring-violet-500 outline-none"
                     value={form.tahun}
-                    onChange={(e) => setForm({...form, tahun: parseInt(e.target.value)})}
+                    onChange={(e) => setForm({...form, tahun: parseInt(e.target.value) || new Date().getFullYear()})}
                   />
                 </div>
               </div>

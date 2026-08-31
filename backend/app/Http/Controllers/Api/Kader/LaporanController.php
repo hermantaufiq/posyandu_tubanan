@@ -17,6 +17,7 @@ class LaporanController extends Controller
     {
         $request->validate([
             'kategori' => 'required|string',
+            'tanggal'  => 'required|integer|min:1|max:31',
             'bulan'    => 'required|string',
             'tahun'    => 'required|integer',
             'foto'     => 'required|image|max:5120', // maks 5MB
@@ -34,6 +35,7 @@ class LaporanController extends Controller
         $laporan = LaporanFoto::create([
             'posyandu_id' => $user->posyandu_id,
             'kader_id'    => $user->id,
+            'tanggal'     => $request->tanggal,
             'bulan'       => $request->bulan,
             'tahun'       => $request->tahun,
             'kategori'    => $request->kategori,
@@ -55,6 +57,7 @@ class LaporanController extends Controller
     {
         $request->validate([
             'kategori' => 'required|string',
+            'tanggal'  => 'required|integer|min:1|max:31',
             'bulan'    => 'required|string',
             'tahun'    => 'required|integer',
             'data'     => 'required|array',
@@ -69,6 +72,7 @@ class LaporanController extends Controller
         $pws = LaporanPws::updateOrCreate(
             [
                 'posyandu_id'      => $user->posyandu_id,
+                'tanggal'          => $request->tanggal,
                 'bulan'            => $request->bulan,
                 'tahun'            => $request->tahun,
                 'kategori_sasaran' => $request->kategori,

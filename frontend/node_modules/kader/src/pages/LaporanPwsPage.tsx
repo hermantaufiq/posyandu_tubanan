@@ -441,6 +441,7 @@ export default function LaporanPwsPage() {
 
   const [form, setForm] = useState({
     kategori: "Bayi, Balita & Apras (0-71 Bulan)",
+    tanggal: new Date().getDate(),
     bulan: new Date().toLocaleString('id-ID', { month: 'long' }),
     tahun: new Date().getFullYear(),
   });
@@ -462,6 +463,7 @@ export default function LaporanPwsPage() {
     try {
       await api.post("/kader/laporan/pws", {
         kategori: form.kategori,
+        tanggal: form.tanggal,
         bulan: form.bulan.toString(),
         tahun: form.tahun,
         data: pwsData,
@@ -548,7 +550,17 @@ export default function LaporanPwsPage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Tanggal Pelaksanaan</label>
+                  <input 
+                    type="number" 
+                    min="1" max="31"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium text-slate-700 dark:text-slate-200 focus:border-emerald-500 focus:ring-emerald-500 outline-none"
+                    value={form.tanggal}
+                    onChange={(e) => setForm({...form, tanggal: parseInt(e.target.value) || 1})}
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Bulan</label>
                   <select 
@@ -567,7 +579,7 @@ export default function LaporanPwsPage() {
                     type="number" 
                     className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium text-slate-700 dark:text-slate-200 focus:border-emerald-500 focus:ring-emerald-500 outline-none"
                     value={form.tahun}
-                    onChange={(e) => setForm({...form, tahun: parseInt(e.target.value)})}
+                    onChange={(e) => setForm({...form, tahun: parseInt(e.target.value) || new Date().getFullYear()})}
                   />
                 </div>
               </div>
