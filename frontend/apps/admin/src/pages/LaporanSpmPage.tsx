@@ -39,16 +39,24 @@ export default function LaporanSpmPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    api.get("/admin/laporan-kader")
-      .then(res => {
-        setLaporan({
-          fotos: res.data.fotos || [],
-          pws: res.data.pws || []
+    const fetchData = (isBackground = false) => {
+      if (!isBackground) setLoading(true);
+      api.get("/admin/laporan-kader")
+        .then(res => {
+          setLaporan({
+            fotos: res.data.fotos || [],
+            pws: res.data.pws || []
+          });
+        })
+        .catch(console.error)
+        .finally(() => {
+          if (!isBackground) setLoading(false);
         });
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    };
+
+    fetchData();
+    const interval = setInterval(() => fetchData(true), 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const allReports = [...laporan.fotos, ...laporan.pws];

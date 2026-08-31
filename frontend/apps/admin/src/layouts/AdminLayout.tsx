@@ -28,11 +28,17 @@ export default function AdminLayout() {
   const [unverifiedCount, setUnverifiedCount] = useState(0);
 
   useEffect(() => {
-    api.get('/admin/laporan-kader').then(res => {
-      const { fotos = [], pws = [] } = res.data;
-      const count = [...fotos, ...pws].filter(r => r.status === 'menunggu_verifikasi').length;
-      setUnverifiedCount(count);
-    }).catch(() => {});
+    const fetchBadge = () => {
+      api.get('/admin/laporan-kader').then(res => {
+        const { fotos = [], pws = [] } = res.data;
+        const count = [...fotos, ...pws].filter(r => r.status === 'menunggu_verifikasi').length;
+        setUnverifiedCount(count);
+      }).catch(() => {});
+    };
+
+    fetchBadge();
+    const interval = setInterval(fetchBadge, 15000);
+    return () => clearInterval(interval);
   }, [location.pathname]);
 
   const NAV_GROUPS = [

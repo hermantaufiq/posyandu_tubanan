@@ -39,9 +39,14 @@ export default function LaporanKaderPage() {
 
   useEffect(() => {
     fetchData();
+    const interval = setInterval(() => {
+      fetchData(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
     try {
       const res = await api.get('/admin/laporan-kader');
       setLaporan(res.data);
