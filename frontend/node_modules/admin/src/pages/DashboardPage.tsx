@@ -3,6 +3,11 @@ import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as
 import { Users, MapPin, Heart, FileText, Search, LogOut } from 'lucide-react';
 import api from '../lib/api';
 
+// Skeleton shimmer component
+function Skeleton({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse bg-slate-200 dark:bg-slate-700 rounded-lg ${className}`} />;
+}
+
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -10,14 +15,9 @@ export default function DashboardPage() {
   useEffect(() => {
     api.get('/admin/dashboard')
       .then(res => setData(res.data))
+      .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
-
-  if (loading) return (
-    <div className="flex justify-center p-12">
-      <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
-    </div>
-  );
 
   const stats = [
     { title: 'Total Posyandu', value: data?.stats.total_posyandu || 0, icon: MapPin, sub: 'Posyandu di wilayah Anda', color: 'text-blue-600' },
@@ -48,7 +48,13 @@ export default function DashboardPage() {
 
       {/* Grid Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((s, i) => (
+        {loading ? Array.from({length: 4}).map((_, i) => (
+          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-3">
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-8 w-1/2" />
+            <Skeleton className="h-3 w-full" />
+          </div>
+        )) : stats.map((s, i) => (
           <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
             <p className="text-sm font-medium text-slate-500 mb-1">{s.title}</p>
             <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">{s.value}</h3>
@@ -65,6 +71,7 @@ export default function DashboardPage() {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 dark:text-white mb-6">Proporsi Sasaran Kesehatan Bulan Ini</h3>
           <div className="h-[250px] w-full">
+            {loading ? <Skeleton className="h-full w-full" /> : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data?.stats?.proporsi || []} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
@@ -80,6 +87,7 @@ export default function DashboardPage() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            )}
           </div>
           <div className="flex items-center justify-center gap-4 mt-4 text-xs font-medium text-slate-500">
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500"></span> Bumil</span>
@@ -94,6 +102,7 @@ export default function DashboardPage() {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 dark:text-white mb-6">Tren Sasaran Kesehatan (6 Bulan)</h3>
           <div className="h-[250px] w-full">
+            {loading ? <Skeleton className="h-full w-full" /> : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data?.tren_sasaran || []} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                 <defs>
@@ -109,6 +118,7 @@ export default function DashboardPage() {
                 <Area type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorTrend)" activeDot={{ r: 6 }} />
               </AreaChart>
             </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>
