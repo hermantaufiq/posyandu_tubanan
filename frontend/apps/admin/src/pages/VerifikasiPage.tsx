@@ -28,7 +28,7 @@ function formatPwsKey(key: string): string {
   return key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/api$/, '');
+const API_BASE_URL = 'https://posyandu-tubanan-api-production-6ff3.up.railway.app';
 
 export default function LaporanKaderPage() {
   const [activeTab, setActiveTab] = useState<'pws' | 'foto'>('pws');
