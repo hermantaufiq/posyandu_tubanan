@@ -52,9 +52,9 @@ export default function LaporanKaderPage() {
     }
   };
 
-  const handleVerifyFoto = async (id: number) => {
+  const handleVerifyFoto = async (id: number, status: 'terverifikasi' | 'ditolak') => {
     try {
-      await api.put(`/admin/laporan-kader/foto/${id}/verifikasi`);
+      await api.put(`/admin/laporan-kader/foto/${id}/verifikasi`, { status });
       fetchData();
     } catch (error) {
       console.error(error);
@@ -62,9 +62,9 @@ export default function LaporanKaderPage() {
     }
   };
 
-  const handleVerifyPws = async (id: number) => {
+  const handleVerifyPws = async (id: number, status: 'terverifikasi' | 'ditolak') => {
     try {
-      await api.put(`/admin/laporan-kader/pws/${id}/verifikasi`);
+      await api.put(`/admin/laporan-kader/pws/${id}/verifikasi`, { status });
       fetchData();
     } catch (error) {
       console.error(error);
@@ -195,13 +195,27 @@ export default function LaporanKaderPage() {
                           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 text-xs font-bold">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Terverifikasi
                           </div>
+                        ) : p.status === 'ditolak' ? (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 text-xs font-bold">
+                            <X className="w-3.5 h-3.5" /> Ditolak
+                          </div>
                         ) : (
-                          <button 
-                            onClick={() => handleVerifyPws(p.id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-500/20 dark:hover:bg-blue-500/30 dark:text-blue-400 text-xs font-bold transition-colors shadow-sm"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Verifikasi
-                          </button>
+                          <div className="flex items-center justify-center gap-2">
+                            <button 
+                              onClick={() => handleVerifyPws(p.id, 'terverifikasi')}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 dark:bg-emerald-500/20 dark:hover:bg-emerald-500/30 dark:text-emerald-400 text-xs font-bold transition-colors shadow-sm"
+                              title="Terima Laporan"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Terima
+                            </button>
+                            <button 
+                              onClick={() => handleVerifyPws(p.id, 'ditolak')}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-700 dark:bg-rose-500/20 dark:hover:bg-rose-500/30 dark:text-rose-400 text-xs font-bold transition-colors shadow-sm"
+                              title="Tolak Laporan"
+                            >
+                              <X className="w-3.5 h-3.5" /> Tolak
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -255,12 +269,24 @@ export default function LaporanKaderPage() {
                   
                   <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
                   {f.status === 'menunggu_verifikasi' ? (
-                      <button 
-                        onClick={() => handleVerifyFoto(f.id)}
-                        className="w-full bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2"
-                      >
-                        <CheckCircle2 className="w-5 h-5" /> Verifikasi Arsip
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleVerifyFoto(f.id, 'terverifikasi')}
+                          className="flex-1 bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm"
+                        >
+                          <CheckCircle2 className="w-4 h-4" /> Terima
+                        </button>
+                        <button 
+                          onClick={() => handleVerifyFoto(f.id, 'ditolak')}
+                          className="flex-1 bg-rose-100 dark:bg-rose-500/20 hover:bg-rose-200 dark:hover:bg-rose-500/30 text-rose-700 dark:text-rose-400 font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm"
+                        >
+                          <X className="w-4 h-4" /> Tolak
+                        </button>
+                      </div>
+                    ) : f.status === 'ditolak' ? (
+                      <div className="w-full bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-rose-200 dark:border-rose-500/20 border-dashed">
+                        Ditolak
+                      </div>
                     ) : (
                       <div className="w-full bg-slate-50 dark:bg-slate-800/50 text-emerald-600 dark:text-emerald-400 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-emerald-200 dark:border-emerald-500/20 border-dashed">
                         Terverifikasi

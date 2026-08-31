@@ -29,10 +29,11 @@ class LaporanKaderController extends Controller
     public function verifikasiFoto(Request $request, $id)
     {
         $foto = LaporanFoto::findOrFail($id);
-        $foto->update(['status' => 'terverifikasi']);
+        $status = $request->input('status', 'terverifikasi');
+        $foto->update(['status' => $status]);
 
         return response()->json([
-            'message' => 'Laporan foto berhasil diverifikasi.',
+            'message' => 'Status laporan foto berhasil diperbarui.',
             'data'    => $foto
         ]);
     }
@@ -43,10 +44,11 @@ class LaporanKaderController extends Controller
     public function verifikasiPws(Request $request, $id)
     {
         $pws = LaporanPws::findOrFail($id);
-        $pws->update(['status' => 'terverifikasi']);
+        $status = $request->input('status', 'terverifikasi');
+        $pws->update(['status' => $status]);
 
         return response()->json([
-            'message' => 'Data PWS digital berhasil diverifikasi.',
+            'message' => 'Status PWS digital berhasil diperbarui.',
             'data'    => $pws
         ]);
     }
